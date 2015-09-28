@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<!--
+COLLABORATORS: vgunning
+gabrielj
+xsoriano
+   <script type="text/javascript" src="jquery/time/jquery.plugin.js"></script> 
+    <script type="text/javascript" src="jquery/time/jquery.timeentry.min.js"></script>
+-->
+<html>
+
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>MixTape</title>
+    <link type="text/css" href="bookmarkEditor.css" rel="stylesheet">    
+    <link href="./jquery/jquery-ui.css" rel="stylesheet">
+    <!-- Load style sheets -->
+    <link href='http://fonts.googleapis.com/css?family=Vollkorn:400,700' rel='stylesheet' type='text/css'> <!-- font -->
+    <link rel='stylesheet' type='text/css' href='bootstrap/css/bootstrap.min.css' />
+    <link rel="stylesheet" type="text/css" href="mixtape.css" />
+    <link rel='stylesheet' type='text/css' href='color-management.css'/>
+    <link rel="stylesheet" type="text/css" href="jquery/time/jquery.timeentry.css"> 
+    <!-- comment or uncomment based on whether the navigation should be hover or click -->
+    <!-- <link rel='stylesheet' type='text/css' href='hoverNav.css' />  -->
+
+    <!-- Load any supplemental Javascript libraries here -->
+    <script type="text/javascript" src="jquery/external/jquery/jquery.js"></script>
+    <script type="text/javascript" src="jquery/jquery-ui.js"></script>
+    <script type='text/javascript' src='external_js/bootbox.min.js'></script>
+    <script type='text/javascript' src='bootstrap/js/bootstrap.min.js'></script>
+    <script type='text/javascript' src='external_js/bootbox.min.js'></script>
+    <script type='text/javascript' src='bookmarkEditor.js'></script>
+
+    <script type='text/javascript' src='basicBehavior.js'></script>
+    <script type='text/javascript' src='objects.js'></script>
+    <script type='text/javascript' src='dummy.js'></script>
+    <script type='text/javascript' src='player.js'></script>
+    <script type='text/javascript' src='playlist.js'></script>
+    <script type='text/javascript' src='editPlaylist.js'></script>
+    <script type='text/javascript' src='mixtape.js'></script>
+    <script type='text/javascript' src='documentListeners.js'></script>
+    <script type="text/javascript" src="jquery/time/jquery.plugin.js"></script> 
+    <script type="text/javascript" src="jquery/time/jquery.timeentry.min.js"></script>
+    <script type='text/javascript'>
+
+        // pset 2 parse url args
+        $.extend({
+            getUrlVars : function() {
+                var vars = [], hash;
+                var hashes = window.location.href.slice(
+                    window.location.href.indexOf('?') + 1).split('&');
+                for ( var i = 0; i < hashes.length; i++) {
+                    hash = hashes[i].split('=');
+                    vars.push(hash[0]);
+                    vars[hash[0]] = hash[1];
+                }
+                return vars;
+            },
+            getUrlVar : function(name) {
+                return $.getUrlVars()[name];
+            }
+        });
+        // get a username
+        var username;
+        $(document).ready(function() {
+            if ($.getUrlVar('user')) {
+                usernum = $.getUrlVar('user');
+            }
+        });
+
+    </script>
+</head>
+
+<body>
+
+    <div class='jumbotron'>
+        <div class='container' id='top-row'>
+            <h1 class='title'>MixTape</h1>
+            <button type='button' class='btn btn-lg btn-default indigo' onClick='newPlaylist();'>+ New Playlist</button>
+        </div>
+    </div>    
+    <div class='container'>
+        <div class='col-md-2 left'>
+            <div id='playlists'>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active indigo" onClick="newPlaylist();"><a href="#">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Playlists</a>
+                    </li>
+
+                    <ul class="list-group" role="menu" aria-labelledby="dropdownMenu">
+                    </ul>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class='col-md-2'>
+            <div id='clips'>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active indigo" onClick="editPlaylist();"><a href="#">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Clips</a>
+                    </li>
+
+                    <ul class="list-group">
+                    </ul>
+                </ul>
+            </div>
+        </div>
+
+        <div class='col-md-2'>
+            <div id='bookmarks'>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active indigo" onClick="focusBookmarkTextbox();"><a href="#">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Bookmarks</a>
+                    </li>
+
+
+                    <ul class="list-group">
+                    </ul>
+
+                </div>
+            </div>
+            <div class='col-md-6' id='music-clip-column'>
+                <div class= 'noselect'id='music-clip-window'>
+                    <ul class="nav nav-pills nav-stacked">
+                        <li id="edWindow_heading" class="active indigo"><a>Editing Window</a></li>
+                        <div class="music_controls">
+                            <div class="bookmark_background" id="bookmark_background_id">
+                                <button type="button" class= "btn btn-info btn-lg" id="btnBookmark">Add Bookmark</button>
+                                <input id="inputStartTime" type="text" placeholder="Start Time"/> 
+                                <input id="inputEndTime" type="text" placeholder="End TIme"/>
+                            </div>
+                            <div class="time_passed"></div>
+                            <audio src="" type="audio/mpeg" id="current-clip"></audio>
+                            <button id="btnPlay" type="button" class="btn btn-info btn-lg"><span class="editor-button glyphicon glyphicon-play" id="btnPlay_icon"></span></button>
+                            <div class="time_length"></div>
+                        </div>
+                        <div class="track_background" id="track_background_id">
+                            <div class="track" id="track_id"></div>
+                            <div class="progress_bar" id="progress_bar_id"></div>
+                            <div class="progress_thumb" id="progress_thumb_id"></div>
+                            <div class="bookmark_marker" id="bookmark_marker_start"><span class="glyphicon glyphicon-triangle-top"></span></div>
+                            <div id="bookmark_time_start"></div>
+                            <div id="bookmark_time_end"></div>
+                            <div class="bookmark_marker" id="bookmark_marker_end"><span class="glyphicon glyphicon-triangle-top"></span></div>
+                            <div id="hover_time_id"></div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>  
+
+        <!-- NewPlaylist modal -->
+        <div id="newPlaylistWindow" class="modal fade" id="np-window" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='clearPlaylistModal();'>
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <form>
+                            <input placeholder="New Playlist Name" type="text" class="form-control" id="recipient-name" onclick="this.select()">
+                        </form>
+                        
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row"><h5 class="modal-title" id="np-name">Add music to this playlist</h5></div>
+                            <div class = "row">
+                                <div class="col-md-6 panel panel-default" id="np-clipSource" role="tabpanel">
+                                    <div class="panel-body">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li role="presentation" class="active"><a href="#np-computerTab" role="tab" data-toggle="tab">From your Computer</a></li>
+                                            <li role="presentation"><a href="#np-urlTab" role="tab" data-toggle="tab">Paste a URL</a></li>
+                                        </ul>
+
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="np-computerTab">
+                                                <div class="panel panel-default panel-body" id='computer-container'>computer </div>        
+                                                <ul></ul>                    
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" id="np-urlTab">
+                                                <div class="panel panel-default panel-body" id='url-container'>                            
+                                                    <label class=" control-label" for="url">Paste a music URL here:</label> 
+                                                    <input name="url" type="text" id='np-url' onClick='this.select()'> </input>
+                                                </div>                            
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!--<div class="col-md-1" id="np-addClipArrow">
+                                    <a>
+                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    </a>
+                                </div>-->
+                                <div class="col-md-1" >
+                                  <!--blank space-->
+                                </div>
+
+
+                                <div class="col-md-5 panel panel-default" id="np-addedClips">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Added Clips</h3>
+                                        <div class="panel panel-default panel-body">                                
+                                            <ul id='np-added-container' class='list-group'></ul>     
+                                        </div>
+                                    </div>               
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onClick='clearPlaylistModal();'>Cancel</button>
+                        <button type="button" class="btn btn-primary" id="np-saveButton" onClick='savePlaylists();'>Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- EditPlaylist modal -->
+        <div id="editPlaylistWindow" class="modal fade" id="ep-window" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Edit <span id='current-playlist-name'>Current Playlist Name</span>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='closeEditModal();'>
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <form>
+                            <input placeholder="Edit Playlist Name" type="text" class="form-control" id="edit-playlist-name" onclick="this.select()">
+                        </form>
+                        
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row"><h5 class="modal-title" id="ep-name">Add/Remove music from this playlist</h5></div>
+                            <div class = "row">
+                                <div class="col-md-6 panel panel-default" id="ep-clipSource" role="tabpanel">
+                                    <div class="panel-body">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li role="presentation" class="active"><a href="#ep-computerTab" role="tab" data-toggle="tab">From your Computer</a></li>
+                                            <li role="presentation"><a href="#ep-urlTab" role="tab" data-toggle="tab">Paste a URL</a></li>
+                                        </ul>
+
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="ep-computerTab">
+                                                <div class="panel panel-default panel-body" id='ep-computer-container'>computer </div>        
+                                                <ul></ul>                    
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" id="ep-urlTab">
+                                                <div class="panel panel-default panel-body" id='ep-url-container'>                            
+                                                    <label class=" control-label" for="url">Paste a music URL here:</label> 
+                                                    <input name="url" type="text" id='ep-url' onClick='this.select()'> </input>
+                                                </div>                            
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-1" >
+                                  <!--blank space-->
+                                </div>
+
+
+                                <div class="col-md-5 panel panel-default" id="np-addedClips">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Current Clips</h3>
+                                        <div class="panel panel-default panel-body">                                
+                                            <ul id='ep-added-container' class='list-group'></ul>     
+                                        </div>
+                                    </div>               
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onClick='closeEditModal();'>Cancel</button>
+                        <button type="button" class="btn btn-primary" id="ep-saveButton" onClick='saveEdit();'>Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                
+
+    </div>
+
+</body>
+
+</html>

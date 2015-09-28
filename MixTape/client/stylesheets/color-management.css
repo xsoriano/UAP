@@ -1,0 +1,24 @@
+/* this will contain most of the color/font management on the item */
+.nav-pills>li.active.indigo>a, .nav-pills>li.active.indigo>a:focus, .nav-pills>li.active.indigo>a:hover {
+	background-color: #3F51B5; /* google 500 indigo */
+}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+	color: black;
+	background-color: #E8EAF6; /* google 50 indigo */
+	border-color: #E8EAF6;
+}
+
+.list-group-header .list-group-header-item{
+	background-color: #3F51B5; /* google 500 indigo */
+}
+
+.btn-primary.indigo.focus, .btn-primary.indigo:hover, .btn-primary.indigo:active, .btn-primary.indigo:focus, .btn-primary.active.indigo {
+	background-color: #3F51B5; /* google 500 indigo */
+  	border-color: #204d74;
+}
+
+.indigo:hover{
+	background-color: #E8EAF6; /* google 50 indigo */
+  	border-color: #204d74;
+}
