@@ -1,8 +1,12 @@
+console.log('Loading Basic Behaviour')
+
 //Document for basic behaviour
 $(document).ready(function() {
-	console.log('Here 2');
 	$('#addPlaylistBttn').click(function(e) {
 
+	});
+
+	$('#top-banner-new-playlist-btn').click(function(e){
 	});
 
 	$('#addClipBttn').click(function(e) {

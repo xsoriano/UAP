@@ -1,5 +1,29 @@
 // everything that is dealing with or updating the new playlist dialog is going in here...
 
+  // This code only runs on the client
+  console.log("hello client!");
+  Template.topBanner.events({
+  	'click #topBanner-newPlaylistBtn': function(){
+       newPlaylist();
+       //  $('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
+      	// fillDummyDialog();
+    }
+  });
+
+
+  Template.topBanner.helpers({
+
+    
+  });
+
+
+
+
+
+function  newPlaylist() {
+	$('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
+	fillDummyDialog();
+}
 // add to the menu a new item
 // Needs to be modified!!
 function addItemToDialog(computer, item, matching, func){
@@ -41,27 +65,19 @@ function removeMusic(button){
 	$('#' + otherid).toggleClass('active');
 }
 
-if (Meteor.isClient){
-	// pull up the playlist dialog
-	function newPlaylist(){
-		$('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
-		fillDummyDialog();
-	}
-}
-
 
 function savePlaylists(){
 // <<<<<<< HEAD
 // =======
-	if ($('#newPlaylistWindow').hasClass('in')){
+if ($('#newPlaylistWindow').hasClass('in')){
 		// this means the the dialog was actually open and to carry out the save action
 		$('#newPlaylistWindow').modal('hide'); // close the dialog box
 		var clipsToAdd = document.getElementById('np-added-container').getElementsByClassName('btn'); // id has the clip name?
 		var playlistName = document.getElementById('recipient-name').value;
 // >>>>>>> 475ac56e30c701aa0a67f0c46185b13d5a0f7478
-		if (playlistName == ''){
-			playlistName = 'Playlist ' + (playlists.length + 1).toString();
-		}
+if (playlistName == ''){
+	playlistName = 'Playlist ' + (playlists.length + 1).toString();
+}
 		// check to see if that playlist name already exists
 		if (isPlaylistUsed(playlistName)){
 			playlistName = playlistName + '-1';

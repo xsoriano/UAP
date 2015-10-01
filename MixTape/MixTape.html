@@ -3,12 +3,8 @@
 </head>
 
 <body>
-  <div class='jumbotron'>
-    <div class='container' id='top-row'>
-      <h1 class='title'>MixTape</h1>
-      <button type='button' class='btn btn-lg btn-default indigo' onClick='newPlaylist();'>+ New Playlist</button>
-    </div>
-  </div>    
+  {{> topBanner}}
+
   <div class='container'>
     <div class='col-md-2 left'>
       <div id='playlists'>
@@ -23,18 +19,17 @@
       </div>
     </div>
 
-
     <div class='col-md-2'>
-      <div id='clips'>
-        <ul class="nav nav-pills nav-stacked">
-          <li class="active indigo" onClick="editPlaylist();"><a href="#">
-            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Clips</a>
-          </li>
+      <div id="clips">
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active indigo" onclick="editPlaylist();"><a href="#">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Clips Hey!</a>
+                    </li>
 
-          <ul class="list-group">
-          </ul>
-        </ul>
-      </div>
+                    <ul class="list-group">
+                    </ul>
+                </ul>
+            </div>
     </div>
 
     <div class='col-md-2'>
@@ -97,47 +92,57 @@
         <div class="modal-body">
           <div class="container-fluid">
             <div class="row"><h5 class="modal-title" id="np-name">Add music to this playlist</h5></div>
-            <div class = "row">
-              <div class="col-md-6 panel panel-default" id="np-clipSource" role="tabpanel">
-                <div class="panel-body">
-                  <!-- Nav tabs -->
-                  <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#np-computerTab" role="tab" data-toggle="tab">From your Computer</a></li>
-                    <li role="presentation"><a href="#np-urlTab" role="tab" data-toggle="tab">Paste a URL</a></li>
-                  </ul>
+            <div class="row">
+                                <div class="col-md-6 panel panel-default" id="np-clipSource" role="tabpanel">
+                                    <div class="panel-body">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li role="presentation" class="active"><a href="#np-computerTab" role="tab" data-toggle="tab">From your Computer</a></li>
+                                            <li role="presentation"><a href="#np-urlTab" role="tab" data-toggle="tab">Paste a URL</a></li>
+                                        </ul>
 
-                  <!-- Tab panes -->
-                  <div class="tab-content"><div role="tabpanel" class="tab-pane active" id="np-computerTab"><div class="panel panel-default panel-body" id='computer-container'>computer </div>        
-                  <ul></ul>   </div></div>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="np-computerTab">
+                                                <div class="panel panel-default panel-body" id="computer-container">
+                                                <ul class="list-group">
+                                                  <li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="Clocking-I"><span>Clocking-I</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="Clocking-II"><span>Clocking-II</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="Foundry-TXST"><span>Foundry-TXST</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-1-Prelude"><span>MackeySopSaxCto-1-Prelude</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-2-Felt"><span>MackeySopSaxCto-2-Felt</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-3-Metal"><span>MackeySopSaxCto-3-Metal</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-4-Wood"><span>MackeySopSaxCto-4-Wood</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-5-Finale"><span>MackeySopSaxCto-5-Finale</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="NightOnFire"><span>NightOnFire</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="ShelteringSky-TXST"><span>ShelteringSky-TXST</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="UNCGHymn"><span>UNCGHymn</span></li> 
+
+                                                </ul>
+                                                
+                                              </div>                
+                                            </div>
+                                            <div role="tabpanel" class="tab-pane" id="np-urlTab">
+                                                <div class="panel panel-default panel-body" id="url-container">                            
+                                                    <label class=" control-label" for="url">Paste a music URL here:</label> 
+                                                    <input name="url" type="text" id="np-url" onclick="this.select()"> 
+                                                </div>                            
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!--<div class="col-md-1" id="np-addClipArrow">
+                                    <a>
+                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    </a>
+                                </div>-->
+                                <div class="col-md-1">
+                                  <!--blank space-->
+                                </div>
 
 
-                  <div role="tabpanel" class="tab-pane" id="np-urlTab">
-                    <div class="panel panel-default panel-body" id='url-container'> 
-                      <label class=" control-label" for="url">Paste a music URL here:</label> 
-                      <input name="url" type="text" id='np-url' onClick='this.select()'>
-                    </div> 
-                  </div>
-
-
-
-                </div>
-
-                <div class="col-md-1" >
-                  <!--blank space-->
-                </div>
-
-
-                <div class="col-md-5 panel panel-default" id="np-addedClips">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Added Clips</h3>
-                    <div class="panel panel-default panel-body">                                
-                      <ul id='np-added-container' class='list-group'></ul>     
-                    </div>
-                  </div>               
-                </div>
-
-              </div>
-            </div>
+                                <div class="col-md-5 panel panel-default" id="np-addedClips">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Added Clips</h3>
+                                        <div class="panel panel-default panel-body">                                
+                                            <ul id="np-added-container" class="list-group ui-sortable"></ul>     
+                                        </div>
+                                    </div>               
+                                </div>
+                            </div>
           </div>
         </div>
 
