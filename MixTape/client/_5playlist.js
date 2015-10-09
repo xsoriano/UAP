@@ -4,7 +4,7 @@
   console.log("hello client!");
   Template.topBanner.events({
   	'click #topBanner-newPlaylistBtn': function(){
-       newPlaylist();
+       MixTape.newPlaylist();
        //  $('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
       	// fillDummyDialog();
     }
@@ -20,13 +20,13 @@
 
 
 
-function  newPlaylist() {
+MixTape.newPlaylist= function() {
 	$('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
-	fillDummyDialog();
+	MixTape.fillDummyDialog();
 }
 // add to the menu a new item
 // Needs to be modified!!
-function addItemToDialog(computer, item, matching, func){
+MixTape.addItemToDialog = function(computer, item, matching, func){
 	var itemContainer = document.createElement('li');
 	var itemText = document.createElement('span');
 
@@ -40,21 +40,21 @@ function addItemToDialog(computer, item, matching, func){
 }
 
 // toggle it active and also add to the other side of the menu
-function selectMusic(button){
+MixTape.selectMusic= function(button){
 	$(button).toggleClass('active');  
 	button.setAttribute('onClick', 'removeMatching(this)');
 
 	var otherMenu = document.getElementById('np-added-container');
-	addItemToDialog(otherMenu, button.firstChild.innerHTML, '-matching', 'removeMusic(this)');
+	MixTape.addItemToDialog(otherMenu, button.firstChild.innerHTML, '-matching', 'removeMusic(this)');
 }
 
-function removeMatching(button){
+MixTape.removeMatching= function(button){
 	document.getElementById(button.id + '-matching').remove();
 	$(button).toggleClass('active');
 	document.getElementById(button.id).setAttribute('onClick', 'selectMusic(this)');
 }
 
-function removeMusic(button){
+MixTape.removeMusic= function(button){
 	button.remove();
 	// find partner and toggle the active and give back the function
 	var otherid = button.id.split('-');
@@ -66,7 +66,7 @@ function removeMusic(button){
 }
 
 
-function savePlaylists(){
+MixTape.savePlaylists = function(){
 // <<<<<<< HEAD
 // =======
 if ($('#newPlaylistWindow').hasClass('in')){
@@ -79,7 +79,7 @@ if (playlistName == ''){
 	playlistName = 'Playlist ' + (playlists.length + 1).toString();
 }
 		// check to see if that playlist name already exists
-		if (isPlaylistUsed(playlistName)){
+		if (MixTape.isPlaylistUsed(playlistName)){
 			playlistName = playlistName + '-1';
 		}
 		document.getElementById('recipient-name').value = '';
@@ -94,33 +94,32 @@ if (playlistName == ''){
 			else{
 				clip = new Clip().init_name_playlist(clipsToAdd[i].textContent, playlist);
 			}
-			clip.addSrc('music/' + clip.name + '.mp3');
+			clip.addSrc('http://mit.edu/xsoriano/www/music/' + clip.name + '.mp3');
 			playlist.addClip(clip);
 		}
 		// add a new playlist for now
 		// checking should be implemented
 		playlists.push(playlist);
-		setCurrentPlaylist(playlists.length - 1);
+		MixTape.setCurrentPlaylist(playlists.length - 1);
 		if (clipsToAdd.length > 0){
-			setCurrentClip(0);
+			MixTape.setCurrentClip(0);
 		}
-		updateMenus();
-		makeActive(document.getElementById(playlists[playlists.length - 1].id));
+		MixTape.updateMenus();
+		MixTape.makeActive(document.getElementById(playlists[playlists.length - 1].id));
 		if (clipsToAdd.length > 0){
-			makeActive(document.getElementById(playlists[playlists.length - 1].clips[0].id));
+			MixTape.makeActive(document.getElementById(playlists[playlists.length - 1].clips[0].id));
 		}
 	}
 }
 
-function insertURL(url){
+MixTape.insertURL= function(url){
 	var otherMenu = document.getElementById('np-added-container');
 	addDummyURL(otherMenu, url.value);
 	var otherMenu = document.getElementById('ep-added-container');
 	addDummyURL(otherMenu, url.value);
 	url.value = '';
 }
-
-function addDummyURL(menu, url){
+MixTape.addDummyURL= function(menu, url){
 	var itemContainer = document.createElement('li');
 	var itemText = document.createElement('span');
 
@@ -136,7 +135,7 @@ function addDummyURL(menu, url){
 
 
 // on closing without saving
-function clearPlaylistModal(){
+MixTape.clearPlaylistModal = function(){
 	$('#np-added-container .list-group-item').remove();
 	$('#newPlaylistWindow').find('form')[0].reset();
 }

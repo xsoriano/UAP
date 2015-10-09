@@ -1,11 +1,11 @@
 var musicfiles = ['Clocking-I', 'Clocking-II', 'Foundry-TXST', 'MackeySopSaxCto-1-Prelude', 'MackeySopSaxCto-2-Felt', 'MackeySopSaxCto-3-Metal', 'MackeySopSaxCto-4-Wood', 'MackeySopSaxCto-5-Finale','NightOnFire', 'ShelteringSky-TXST', 'UNCGHymn'];
 var fileEnding = '.mp3';
-var folder = 'music';
+var folder = 'http://mit.edu/xsoriano/www/music';
 var dialogMenu;
 
 console.log('Loading dummy')
 
-createDummyItems = function (){
+MixTape.createDummyItems = function (){
 	// generate the playlists (Doing Playlist 1 & Playlist 2)
 	var playlists = [];
 	var playlist1 = new Playlist().init_name('Mackey');
@@ -24,14 +24,14 @@ createDummyItems = function (){
 	return playlists;
 }
 
-initalDummyExample = function (){
+MixTape.initalDummyExample = function (){
 	// Lecture 1 - NameAfterASuperLongThingThatIneedForTesting, Lecture 2, Lecture 3
 	var playlists = [];
 	// Clip 1, Clip 2, Clip 3
 	// Bookmark 1, Bookmark 2, Bookmark 3
 }
 
-fillDummyDialog = function (){
+MixTape.fillDummyDialog = function (){
 	dialogMenu = document.getElementById('computer-container');
 	// delete any old children
 	while(dialogMenu.firstChild){
@@ -42,11 +42,11 @@ fillDummyDialog = function (){
 	dialogMenu.appendChild(ul);
 	for(var i = 0; i < musicfiles.length; i++){
 		// add each of the files
-		addItemToDialog(dialogMenu, musicfiles[i], '', 'selectMusic(this)');
+		MixTape.addItemToDialog(dialogMenu, musicfiles[i], '', 'MixTape.selectMusic(this)');
 	}
 }
 
-fillDummyEditDialog = function (){
+MixTape.fillDummyEditDialog = function (){
 	dialogMenu = document.getElementById('ep-computer-container');
 	// delete any old children
 	while(dialogMenu.firstChild){
@@ -57,6 +57,6 @@ fillDummyEditDialog = function (){
 	dialogMenu.appendChild(ul);
 	for(var i = 0; i < musicfiles.length; i++){
 		// add each of the files
-		addItemToDialog(dialogMenu, musicfiles[i], '', 'selectEditMusic(this)');
+		addItemToDialog(dialogMenu, musicfiles[i], '', 'MixTape.selectEditMusic(this)');
 	}
 }

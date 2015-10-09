@@ -1,30 +1,30 @@
 
-var playlistMenu; // these are the menu containers
-var clipMenu;
-var bookmarkMenu;
+playlistMenu = null; // these are the menu containers
+clipMenu = null;
+bookmarkMenu = null;
 
-var currentPlaylist = 0; // these are the current item/object
-var currentClip;
-var currentBookmark;
+currentPlaylist = 0; // these are the current item/object
+currentClip = null;
+currentBookmark = null;
 
-var currentPlaylistIndex;
-var currentBookmarkIndex;
-var currentClipIndex;
-var playlists = []; // this will hold all the created playlists
+currentPlaylistIndex = null;
+currentBookmarkIndex = null;
+currentClipIndex = null;
+playlists = []; // this will hold all the created playlists
 
-var dragging_thumb = false;
+dragging_thumb = false;
 
-var playing_clip = false;
-var interval_function;
-var clip_time_length_ms;
-var clip_time_played_ms; //Time of the currently selected clip, in milliseconds.
+playing_clip = false;
+interval_function = null;
+clip_time_length_ms = null;
+clip_time_played_ms = null; //Time of the currently selected clip, in milliseconds.
 
-var is_bookmark_selected = false;
-var selected_bookmark_identifier = null;
-var selectedPlaylist = null;
-var bookmark_time_start;
-var bookmark_time_end;
-var is_deselecting = false;
+is_bookmark_selected = false;
+selected_bookmark_identifier = null;
+selectedPlaylist = null;
+bookmark_time_start = null;
+bookmark_time_end = null;
+is_deselecting = false;
 
 //var isLoadingMetadata = false;
 
@@ -32,7 +32,7 @@ $(document).ready(function() {
 	playlistMenu = document.getElementById('playlists');
 	clipMenu = document.getElementById('clips');
 	bookmarkMenu = document.getElementById('bookmarks');
-	updateMenus();
+	MixTape.updateMenus();
 
 	// get any params
 	if ($.getUrlVar('')) {
@@ -40,7 +40,7 @@ $(document).ready(function() {
 });
 
 
-setCurrentBookmark = function(bookmarkIndex){
+MixTape.setCurrentBookmark = function(bookmarkIndex){
 	if (bookmarkIndex >=  0){
 		console.log("Setting current bookmark Have");
 		currentBookmark = currentClip.bookmarks[bookmarkIndex];
@@ -52,7 +52,7 @@ setCurrentBookmark = function(bookmarkIndex){
 					console.log(selected_bookmark_identifier);
 					is_bookmark_selected = true;
 					selectedPlaylist = currentClip.playlist;
-					adjustBookmarkMarkers();
+					MixTape.adjustBookmarkMarkers();
 				}
 			}
 		}
@@ -85,13 +85,13 @@ setCurrentBookmark = function(bookmarkIndex){
 						selected_bookmark_identifier = null;
 						is_bookmark_selected = false;
 						is_deselecting = false;
-						adjustBookmarkMarkers();
+						MixTape.adjustBookmarkMarkers();
 					}
 				} else {
 					selected_bookmark_identifier = null;
 					is_bookmark_selected = false;
 					is_deselecting = false;
-					adjustBookmarkMarkers();
+					MixTape.adjustBookmarkMarkers();
 				}
 				
 			}
@@ -101,7 +101,7 @@ setCurrentBookmark = function(bookmarkIndex){
 	return currentBookmark;
 }
 
-setCurrentClip  = function(clipIndex){
+MixTape.setCurrentClip  = function(clipIndex){
 	console.log('In setcurrentclip');
 	currentClipIndex = clipIndex;
 	var prevClip = currentClip;
@@ -110,15 +110,15 @@ setCurrentClip  = function(clipIndex){
 		console.log('Have set currentClip to something');
 		// also set the source to the correct file
 		if (currentClip.bookmarks.length > 0){
-			setCurrentBookmark(-1);
+			MixTape.setCurrentBookmark(-1);
 		}
 		else{
-			setCurrentBookmark(-1);
+			MixTape.setCurrentBookmark(-1);
 		}
 	}
 	else{
 		console.log('Have set currentClip to null');
-		setCurrentBookmark(-1);
+		MixTape.setCurrentBookmark(-1);
 		currentClip = null;
 	}
 	
@@ -133,24 +133,24 @@ setCurrentClip  = function(clipIndex){
 }
 
 // this might change for usability, like take a playlistname instead?
-setCurrentPlaylist = function(playlistIndex){
+MixTape.setCurrentPlaylist = function(playlistIndex){
 	if (playlistIndex >= 0){
 		currentPlaylist = playlists[playlistIndex];
 		if (currentPlaylist.clips.length > 0){
-			setCurrentClip(0);
+			MixTape.setCurrentClip(0);
 		}else{
-			setCurrentClip(-1);
+			MixTape.setCurrentClip(-1);
 		}	
 	}
 	else{
-		setCurrentClip(-1);
-		currentPlaylist = null;
+		MixTape.setCurrentClip(-1);
+		MixTape.currentPlaylist = null;
 	}
 	currentPlaylistIndex = playlistIndex;
 	return currentPlaylist;
 }
 
-isPlaylistUsed = function(nameString){
+MixTape.isPlaylistUsed = function(nameString){
 	var isPlaylist = false;
 	for(var i = 0; i < playlists.length; i++){
 		if(playlists[i].name == nameString){
@@ -161,7 +161,7 @@ isPlaylistUsed = function(nameString){
 }
 
 //In theory this could be generalized for the previous one
-isNametUsed = function(itemBackend, nameString){
+MixTape.isNametUsed = function(itemBackend, nameString){
 	var isName = false;
 	if(itemBackend.type == 'playlist'){
 			// the things on the playlist menu
@@ -195,7 +195,7 @@ isNametUsed = function(itemBackend, nameString){
 	return isName;
 }
 
-isCssIdValid = function(id) {
+MixTape.isCssIdValid = function(id) {
     re = /^[A-Za-z]+[\w\-\:\.]*$/
     return re.test(id)
 }
@@ -210,7 +210,7 @@ isCssIdValid = function(id) {
 	// http://www.prepbootstrap.com/bootstrap-template/collapsepanels (collapsible?)
 
 
-setCurrentItemToNull = function(item){
+MixTape.setCurrentItemToNull = function(item){
 	if (item != null){
 		// add the active class
 		if(item.classList.contains('playlist')){
@@ -229,11 +229,11 @@ setCurrentItemToNull = function(item){
 	}
 }
 
-var checkMetadata;
+checkMetadata = null;
 
 // add to the menu a new item
 // Needs to be modified!!
-addItemToMenu = function(menu, item){
+MixTape.addItemToMenu = function(menu, item){
 	var menuul = menu.children[0].children[1];
 	var itemContainer = document.createElement('li');
 	var itemText = document.createElement('div');
@@ -289,15 +289,15 @@ addItemToMenu = function(menu, item){
 		// var name = ($(this).text()).trim();
 		console.log('In play');
 		var playClip = $(this).parent().parent();
-		deactivate(playClip[0]);
-		makeActive(playClip[0]);
-		updateMenus();	
+		MixTape.deactivate(playClip[0]);
+		MixTape.makeActive(playClip[0]);
+		MixTape.updateMenus();	
 		// console.log(playClip);
-		setCurrentClipPlayer();
+		MixTape.setCurrentClipPlayer();
 		if (waitForMetadata){
-			checkMetadata = setInterval(function () {playWhenMetadataLoaded(e)}, 250);
+			checkMetadata = setInterval(function () {MixTape.playWhenMetadataLoaded(e)}, 250);
 		}else{
-			togglePlay(e);
+			MixTape.togglePlay(e);
 		}
 		
 	});
@@ -305,7 +305,7 @@ addItemToMenu = function(menu, item){
 	itemRemove.appendChild(itemRemoveIcon);
 
 	itemEdit.appendChild(itemEditIcon);
-	addBookmarkEditorFunctionality($(itemEdit))
+	MixTape.addBookmarkEditorFunctionality($(itemEdit))
 
 	itemPlay.appendChild(itemPlayIcon);
 
@@ -328,11 +328,11 @@ addItemToMenu = function(menu, item){
 	var clicks = 0, timeOut = 200;
 	$(itemContainer).bind('click', function(e) {
 		clicks++;
-		deactivate(this);
-		makeActive(this);
+		MixTape.deactivate(this);
+		MixTape.makeActive(this);
 		setTimeout(function() {
 	      if (clicks == 1){
-	      	updateMenus();
+	      	MixTape.updateMenus();
 	      }      
 	    }, timeOut);
 		console.log('clicked on item');
@@ -342,8 +342,9 @@ addItemToMenu = function(menu, item){
 	$(itemContainer).bind('dblclick', function(e) {
 		//isLoadingMetadata = true;
 		//console.log("isLoadingMetadata set to true!");
-		setCurrentClipPlayer();
-		updateMenus();
+		console.log('Before Setting the current Clip')
+		MixTape.setCurrentClipPlayer();
+		MixTape.updateMenus();
 		document.getElementById('inputStartTime').value = '';
         document.getElementById('inputEndTime').value = '';
 		clicks = 0;
@@ -367,24 +368,24 @@ addItemToMenu = function(menu, item){
 	}
 }
 
-deselect = function(bookmark){
+MixTape.deselect = function(bookmark){
 	$('#' + bookmark.id).removeClass('active');
 	is_deselecting = true;
-	setCurrentBookmark(-1);
-	updateMenus();
+	MixTape.setCurrentBookmark(-1);
+	MixTape.updateMenus();
 }
 
-playWhenMetadataLoaded= function(e){
+MixTape.playWhenMetadataLoaded= function(e){
 	if (!waitForMetadata){
 		clearInterval(checkMetadata);
-		togglePlay(e);
+		MixTape.togglePlay(e);
 	}
 		
 }
 
 // Always call updateMenus afterwards, to have control of when the front end is going to change
 // update the currentIndex
-makeActive = function(item){
+MixTape.makeActive = function(item){
 	if (item != null){
 		// add the active class
 		$('#' + item.id).addClass('active');
@@ -393,7 +394,7 @@ makeActive = function(item){
 			// the things on the playlist menu
 			for(var i = 0; i < playlists.length; i++){
 				if (item.id == playlists[i].id){
-					setCurrentPlaylist(i);
+					MixTape.setCurrentPlaylist(i);
 				}
 			}
 		}
@@ -402,7 +403,7 @@ makeActive = function(item){
 			for(var i = 0; i < playlists[currentPlaylistIndex].clips.length; i++){
 				if (item.id == playlists[currentPlaylistIndex].clips[i].id){
 					// set the matching index
-					setCurrentClip(i);
+					MixTape.setCurrentClip(i);
 				}
 			}
 		}
@@ -411,7 +412,7 @@ makeActive = function(item){
 			for(var i = 0; i < playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks.length; i++){
 				if (item.id == playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks[i].id){
 					// set the matching index
-					setCurrentBookmark(i);
+					MixTape.setCurrentBookmark(i);
 				}
 			}
 		}
@@ -423,7 +424,7 @@ makeActive = function(item){
 	// update the currentIndex
 }
 
-deactivate = function(item){
+MixTape.deactivate = function(item){
 	if(item != null){
 		// figure out which items need to be deactivated
 		var type;
@@ -444,7 +445,7 @@ deactivate = function(item){
 	}
 }
 
-removeItemFromMenu = function(removalMenu, item, removalIndex){	
+MixTape.removeItemFromMenu = function(removalMenu, item, removalIndex){	
 	var newSelection = null;
 	
 	//Removing the backend component
@@ -499,25 +500,25 @@ removeItemFromMenu = function(removalMenu, item, removalIndex){
 }
 
 
-updateMenus = function(){
+MixTape.updateMenus = function(){
 	$('.list-group-item').remove();
 	console.log('update menus');
 
 	// iterate through all the playlists and add the clips
 	for(var p = 0; p < playlists.length; p++){
-		addItemToMenu(playlistMenu, playlists[p]);
+		MixTape.addItemToMenu(playlistMenu, playlists[p]);
 	}
 	if (currentPlaylist != null){
 		if (currentPlaylist.clips != null){
 		// add all the active clips
 		for(var c = 0; c < currentPlaylist.clips.length; c++){
-			addItemToMenu(clipMenu, currentPlaylist.clips[c]);
+			MixTape.addItemToMenu(clipMenu, currentPlaylist.clips[c]);
 		}
 		if (currentClip != null){
 			if (currentClip.bookmarks != null){
 			//add all the active bookmarks
 			for(var b = 0; b < currentClip.bookmarks.length; b++){
-				addItemToMenu(bookmarkMenu, currentClip.bookmarks[b]);
+				MixTape.addItemToMenu(bookmarkMenu, currentClip.bookmarks[b]);
 			}
 		}
 		}
@@ -529,11 +530,11 @@ updateMenus = function(){
 	// make things sortable
 	$('.list-group').sortable();
 	$('.list-group').disableSelection();
-	$('.list-group').on('sortupdate', reorderBackend);
+	$('.list-group').on('sortupdate', MixTape.reorderBackend);
 
 }
 
-reorderBackend = function(event, ui){
+MixTape.reorderBackend = function(event, ui){
 	// figure out which clip has changed position
 	var item = ui.item[0];
 	var holder;

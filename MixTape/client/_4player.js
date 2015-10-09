@@ -5,10 +5,10 @@
 noClips = true; //variable to track if we're in start state
 
 //Change by Xavier
-var waitForMetadata = false;
-var currentSrc;
+waitForMetadata = false;
+currentSrc = null;
 //End change by Xavier
-var playingClip;
+playingClip = null;
 
 $(document).ready(function() {
     //Gabriel Modifications. START
@@ -20,23 +20,23 @@ $(document).ready(function() {
     var input_start_time = document.getElementById('inputStartTime');
     var input_end_time = document.getElementById('inputEndTime');
 
-    input_start_time.addEventListener("focus", clearHelpText);
-    input_end_time.addEventListener("focus", clearHelpText);
-    bookmark_btn.addEventListener('click', addNewBookmark);
+    input_start_time.addEventListener("focus", MixTape.clearHelpText);
+    input_end_time.addEventListener("focus", MixTape.clearHelpText);
+    bookmark_btn.addEventListener('click', MixTape.addNewBookmark);
 
-    progress_thumb.addEventListener('mousedown', startDragging);
-    document.addEventListener('mouseup', endDragging);
-    track.addEventListener('click', clickTrack);
-    progress_bar.addEventListener('click', clickTrack);
+    progress_thumb.addEventListener('mousedown', MixTape.startDragging);
+    document.addEventListener('mouseup', MixTape.endDragging);
+    track.addEventListener('click', MixTape.clickTrack);
+    progress_bar.addEventListener('click', MixTape.clickTrack);
 
-    track.addEventListener('mousemove', hoverTrack);
-    progress_bar.addEventListener('mousemove', hoverTrack);
-    track.addEventListener('mouseout', unHover);
-    progress_bar.addEventListener('mouseout', unHover);
+    track.addEventListener('mousemove', MixTape.hoverTrack);
+    progress_bar.addEventListener('mousemove', MixTape.hoverTrack);
+    track.addEventListener('mouseout', MixTape.unHover);
+    progress_bar.addEventListener('mouseout', MixTape.unHover);
 
 
     var btnPlay = document.getElementById('btnPlay');
-    btnPlay.addEventListener('click', togglePlay);
+    btnPlay.addEventListener('click', MixTape.togglePlay);
 
     var clip = document.getElementById('current-clip');
     clip.loop = false;
@@ -65,9 +65,9 @@ $(document).ready(function() {
     	//This is meant to replace part of the'setCurrentClipPlayer' function.
 		console.log(playing_clip);
 		if(playing_clip){
-    		togglePlay();
+    		MixTape.togglePlay();
     	}
-    	resetProgressElements();
+    	MixTape.resetProgressElements();
     	//End
 
     	//change by Xavier
@@ -87,7 +87,7 @@ $(document).ready(function() {
     	playingClip = currentClip;
 
     	//Gabrielj. Testing something.
-    	setCurrentBookmark(-1);
+    	MixTape.setCurrentBookmark(-1);
 
     	//isLoadingMetadata = false;
 
@@ -97,14 +97,14 @@ $(document).ready(function() {
 });
 
 //Change by Xavier
-focusBookmarkTextbox= function(){
+MixTape.focusBookmarkTextbox= function(){
 	$("#inputStartTime").focus();
 }
 
 //Gabriel Modification. START
 
 //Author: Gabrielj. Adds bookmarks to bookmark list
-addNewBookmark= function(e){
+MixTape.addNewBookmark= function(e){
 	if(currentSrc != null){
 		var start_time = $(inputStartTime).val();
 		var end_time = $(inputEndTime).val();
@@ -124,15 +124,15 @@ addNewBookmark= function(e){
 			playingClip.addBookmark(new_bookmark);
 			for(var i = 0; i < playlists.length; i++){
 				if(playingClip.playlist.id == playlists[i].id){
-					setCurrentPlaylist(i);
+					MixTape.setCurrentPlaylist(i);
 				}
 			}
 			for(var i = 0; i < playingClip.playlist.clips.length; i++){
 				if(playingClip.id == playingClip.playlist.clips[i].id){
-					setCurrentClip(i);
+					MixTape.setCurrentClip(i);
 				}
 			}
-			updateMenus();
+			MixTape.updateMenus();
 		} else if(array_start_time.length != 2 || array_end_time.length != 2 
 			|| isNaN(parseInt(array_start_time[0])) || isNaN(parseInt(array_start_time[1])) 
 			|| isNaN(parseInt(array_end_time[0])) || isNaN(parseInt(array_end_time[1])) 
@@ -154,15 +154,15 @@ addNewBookmark= function(e){
 					playingClip.addBookmark(new_bookmark);
 					for(var i = 0; i < playlists.length; i++){
 						if(playingClip.playlist.id == playlists[i].id){
-							setCurrentPlaylist(i);
+							MixTape.setCurrentPlaylist(i);
 						}
 					}
 					for(var i = 0; i < playingClip.playlist.clips.length; i++){
 						if(playingClip.id == playingClip.playlist.clips[i].id){
-							setCurrentClip(i);
+							MixTape.setCurrentClip(i);
 						}
 					}
-					updateMenus();
+					MixTape.updateMenus();
 					document.getElementById('inputStartTime').value = '';
         			document.getElementById('inputEndTime').value = '';
 					console.log("Done adding");
@@ -177,7 +177,7 @@ addNewBookmark= function(e){
 }
 
 //Author: Gabrielj. Called in setCurrentBookmark. Meant to adjust the bookmark markers and the displayed times accordingly.
-adjustBookmarkMarkers= function(){
+MixTape.adjustBookmarkMarkers= function(){
 	if(currentBookmark != null){
 		//Assumption that times are valid. The check happens in addNewBookmark.
 		bookmark_time_start = currentBookmark.startTime;
@@ -230,17 +230,17 @@ adjustBookmarkMarkers= function(){
 		document.getElementById('bookmark_time_end').style.visibility = 'hidden';
 		document.getElementById('bookmark_time_start').style.visibility = 'hidden';
 		if(playing_clip){
-			togglePlay();
+			MixTape.togglePlay();
 		}
 		//Gabrielj. Changes to behavior. Now getting rid of bookmark resets progress elements
-		resetProgressElements();
+		MixTape.resetProgressElements();
 	}
 
-	updateTimePassed();
+	MixTape.updateTimePassed();
 }
 
 //Sets the variable 'dragging_thumb' to true
-startDragging= function(e){
+MixTape.startDragging= function(e){
 	/*
         var parent_pos = $('#content').position();
         var cursor_x = e.clientX-parent_pos.left;
@@ -261,7 +261,7 @@ startDragging= function(e){
     }
 
 //Sets the variable 'dragging_thumb' to false
-endDragging= function(e){
+MixTape.endDragging= function(e){
 	if(dragging_thumb){
 		dragging_thumb = false;
 		var clip = document.getElementById('current-clip');
@@ -280,7 +280,7 @@ console.log("End dragging");
 }
 
 //This is for when dragging after having pressed down on the track thumb.
-dragProgressElements= function(e){
+MixTape.dragProgressElements= function(e){
 	if (noClips == false){
 		if(dragging_thumb){
 			//console.log("I'm dragging");
@@ -323,7 +323,7 @@ dragProgressElements= function(e){
 			clip_time_played_ms = Math.floor(clip_time_played_ms/1000)*1000;
 
 			console.log(clip_time_played_ms);
-			updateTimePassed();
+			MixTape.updateTimePassed();
 		}
 	}
 }
@@ -337,7 +337,7 @@ dragProgressElements= function(e){
 */
 
 //Clears the help text from invalid bookmark time input
-clearHelpText= function(e){
+MixTape.clearHelpText= function(e){
 	var target = e.target;
 	var value = $(target).val();
 	if(value == "Format 'mm:ss'" || "Double click clip!"){
@@ -345,7 +345,7 @@ clearHelpText= function(e){
 	}
 }
 //Update time_passed
-updateTimePassed= function(){
+MixTape.updateTimePassed= function(){
 	if (noClips == false){
 		var minutes = Math.floor(clip_time_played_ms/(60*1000));
 		var seconds = Math.floor(clip_time_played_ms/1000)%60;
@@ -357,7 +357,7 @@ updateTimePassed= function(){
 	}
 }
 
-resetProgressElements= function(){
+MixTape.resetProgressElements= function(){
 	if(is_bookmark_selected){
 		var left_position = $('#bookmark_marker_start').position().left;
 		document.getElementById('progress_thumb_id').style.left = left_position+'px';
@@ -370,21 +370,21 @@ resetProgressElements= function(){
 		document.getElementById('progress_bar_id').style.width = 0+'px';
 		clip_time_played_ms = 0;
 	}
-	updateTimePassed();
+	MixTape.updateTimePassed();
 }
 
-adjustProgressElements= function(){
+MixTape.adjustProgressElements= function(){
 	var progress_percent = clip_time_played_ms/clip_time_length_ms;
 	//console.log('Percent played: ' + progress_percent);
 	document.getElementById('progress_thumb_id').style.left = (document.getElementById('track_background_id').offsetWidth*progress_percent)+'px';
 	document.getElementById('progress_bar_id').style.width = (document.getElementById('track_background_id').offsetWidth*progress_percent)+'px';
 
-	updateTimePassed();
+	MixTape.updateTimePassed();
 
 }
 
 //Toggles between playing the selected clip.
-togglePlay= function(e){
+MixTape.togglePlay= function(e){
 	// for start state
 	if (noClips == false){
 
@@ -398,7 +398,7 @@ togglePlay= function(e){
 			console.log('Stopped Playing');
 		} else {
 			playing_clip = true;
-			interval_function = setInterval(function () {trackTimer()}, 250);
+			interval_function = setInterval(function () {MixTape.trackTimer()}, 250);
 			var clip = document.getElementById('current-clip');
 			console.log('in toggle play play', clip.currentTime);
 			clip.play();
@@ -407,35 +407,35 @@ togglePlay= function(e){
 	}
 }
 
-trackTimer= function() {
+MixTape.trackTimer= function() {
 	if(is_bookmark_selected){
 		if(clip_time_played_ms >= bookmark_time_end){
-			togglePlay();
-			clearInterval(interval_function);
-			resetProgressElements();
+			MixTape.togglePlay();
+			MixTape.clearInterval(interval_function);
+			MixTape.resetProgressElements();
 			//console.log('clip time played',clip_time_played_ms, 'trackTimer()')
 		} else{
 			clip_time_played_ms += 250;
-			adjustProgressElements();
+			MixTape.adjustProgressElements();
 		}
 	} else{
 		// Change by Xavier
 		// added condition that if the currentSrc becomes null, then the track player should stop moving.
 		if(clip_time_played_ms >= clip_time_length_ms || currentSrc == null){
-			togglePlay();
+			MixTape.togglePlay();
 			clearInterval(interval_function);
-			resetProgressElements();
+			MixTape.resetProgressElements();
 			//console.log('clip time played',clip_time_played_ms, 'trackTimer()')
 		} else{
 			clip_time_played_ms += 250;
-			adjustProgressElements();
+			MixTape.adjustProgressElements();
 		}
 	//console.log('Time played in ms: ' + clip_time_played_ms);
 	}
 
 }
 
-clickTrack= function(e){
+MixTape.clickTrack= function(e){
 	if (noClips == false){
 		if(is_bookmark_selected){
 			var parent_pos = $('#music-clip-column').position();
@@ -494,7 +494,7 @@ clickTrack= function(e){
 //Gabriel Modification. END
 
 
-setCurrentClipPlayer= function(){
+MixTape.setCurrentClipPlayer= function(){
 
 //<<<<<<< HEAD
 console.log('Setting current clip player');
@@ -545,7 +545,7 @@ console.log('Setting current clip player');
 
 }
 
-hoverTrack= function(e){
+MixTape.hoverTrack= function(e){
 	if (noClips == false){
 		var parent_pos = $('#music-clip-column').position();
 		var new_pos = ''+(e.clientX-parent_pos.left-17);
@@ -573,6 +573,6 @@ hoverTrack= function(e){
 	}
 }
 
-unHover= function(e) {
+MixTape.unHover= function(e) {
 	$("#hover_time_id").html("");
 }

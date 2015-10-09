@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 /// editing playlist dialog functions
 ///////////////////////////////////////////////////////////////////////
-editPlaylist = function(){
+MixTape.editPlaylist = function(){
 	if(currentPlaylist){
 		$('#editPlaylistWindow').modal('show');
 		fillDummyEditDialog();
@@ -24,7 +24,7 @@ editPlaylist = function(){
 	}
 }
 
-sourceClipsContainsName  = function(stringName){
+MixTape.sourceClipsContainsName  = function(stringName){
 	var isSource = false;
 	for(var i = 0; i < musicfiles.length; i++){
 		if(musicfiles[i] == stringName){
@@ -36,7 +36,7 @@ sourceClipsContainsName  = function(stringName){
 }
 
 // toggle it active and also add to the other side of the menu
-selectEditMusic = function(buttonName){
+MixTape.selectEditMusic = function(buttonName){
 	if(buttonName.id){
 		buttonName = buttonName.id;
 	}
@@ -48,13 +48,13 @@ selectEditMusic = function(buttonName){
 	addItemToDialog(otherMenu, button.firstChild.innerHTML, '-matching', 'removeMusic(this)');
 }
 
-removeEditMatching = function(button){
+MixTape.removeEditMatching = function(button){
 	document.getElementById(button.id + '-matching').remove();
 	$(button).toggleClass('active');
 	document.getElementById(button.id).setAttribute('onClick', 'selectEditMusic(this)');
 }
 
-saveEdit = function(){
+MixTape.saveEdit = function(){
 	// hide the modal
 	$('#editPlaylistWindow').modal('hide'); // close the dialog box
 
@@ -100,7 +100,7 @@ saveEdit = function(){
 	updateMenus();
 }
 
-playlistContainsClipName = function(clipname){
+MixTape.playlistContainsClipName = function(clipname){
 	var containsClip = -1;
 	if(currentPlaylist.clips){
 		for(var i = 0; i < currentPlaylist.clips.length; i++){
@@ -113,7 +113,7 @@ playlistContainsClipName = function(clipname){
 	return containsClip;
 }
 
-closeEditModal = function(){
+MixTape.closeEditModal = function(){
 	var container = document.getElementById('ep-computer-container');
 	while(container.firstChild){
 		container.firstChild.remove();

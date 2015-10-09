@@ -1,6 +1,8 @@
 
 //Document for basic behaviour
 $(document).ready(function() {
+	console.log('In the basic behavior');
+	MixTape.helloWorld();
 	$('#addPlaylistBttn').click(function(e) {
 
 	});

@@ -9,7 +9,7 @@
     <div class='col-md-2 left'>
       <div id='playlists'>
         <ul class="nav nav-pills nav-stacked">
-          <li class="active indigo" onClick="newPlaylist();"><a href="#">
+          <li class="active indigo" onClick="MixTape.newPlaylist();"><a href="#">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Playlists</a>
           </li>
 
@@ -22,7 +22,7 @@
     <div class='col-md-2'>
       <div id="clips">
                 <ul class="nav nav-pills nav-stacked">
-                    <li class="active indigo" onclick="editPlaylist();"><a href="#">
+                    <li class="active indigo" onclick="MixTape.editPlaylist();"><a href="#">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Clips Hey!</a>
                     </li>
 
@@ -35,7 +35,7 @@
     <div class='col-md-2'>
       <div id='bookmarks'>
         <ul class="nav nav-pills nav-stacked">
-          <li class="active indigo" onClick="focusBookmarkTextbox();"><a href="#">
+          <li class="active indigo" onClick="MixTape.focusBookmarkTextbox();"><a href="#">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Bookmarks</a>
           </li>
 
@@ -57,7 +57,7 @@
               <input id="inputEndTime" type="text" placeholder="End TIme"/>
             </div>
             <div class="time_passed"></div>
-            <audio src="" type="audio/mpeg" id="current-clip"></audio>
+            <audio src="https://learning-modules.mit.edu/service/materials/groups/103456/files/446a5b18-80fd-4c9d-98c8-16f2c3e90977" type="audio/mpeg" id="current-clip"></audio>
             <button id="btnPlay" type="button" class="btn btn-info btn-lg"><span class="editor-button glyphicon glyphicon-play" id="btnPlay_icon"></span></button>
             <div class="time_length"></div>
           </div>
@@ -71,6 +71,7 @@
             <div class="bookmark_marker" id="bookmark_marker_end"><span class="glyphicon glyphicon-triangle-top"></span></div>
             <div id="hover_time_id"></div>
           </div>
+
         </ul>
       </div>
     </div>
@@ -81,7 +82,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='clearPlaylistModal();'>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='MixTape.clearPlaylistModal();'>
             <span aria-hidden="true">&times;</span>
           </button>
           <form>
@@ -106,7 +107,7 @@
                                             <div role="tabpanel" class="tab-pane active" id="np-computerTab">
                                                 <div class="panel panel-default panel-body" id="computer-container">
                                                 <ul class="list-group">
-                                                  <li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="Clocking-I"><span>Clocking-I</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="Clocking-II"><span>Clocking-II</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="Foundry-TXST"><span>Foundry-TXST</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-1-Prelude"><span>MackeySopSaxCto-1-Prelude</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-2-Felt"><span>MackeySopSaxCto-2-Felt</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-3-Metal"><span>MackeySopSaxCto-3-Metal</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-4-Wood"><span>MackeySopSaxCto-4-Wood</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="MackeySopSaxCto-5-Finale"><span>MackeySopSaxCto-5-Finale</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="NightOnFire"><span>NightOnFire</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="ShelteringSky-TXST"><span>ShelteringSky-TXST</span></li><li class="list-group-item btn btn-default" onclick="selectMusic(this)" id="UNCGHymn"><span>UNCGHymn</span></li> 
+                        
 
                                                 </ul>
                                                 
@@ -147,8 +148,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal" onClick='clearPlaylistModal();'>Cancel</button>
-          <button type="button" class="btn btn-primary" id="np-saveButton" onClick='savePlaylists();'>Save</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" onClick='MixTape.clearPlaylistModal();'>Cancel</button>
+          <button type="button" class="btn btn-primary" id="np-saveButton" onClick='MixTape.savePlaylists();'>Save</button>
         </div>
       </div>
     </div>
@@ -161,7 +162,7 @@
       <div class="modal-content">
         <div class="modal-header">
           Edit <span id='current-playlist-name'>Current Playlist Name</span>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='closeEditModal();'>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='MixTape.closeEditModal();'>
             <span aria-hidden="true">&times;</span>
           </button>
           <form>
@@ -219,8 +220,8 @@
 
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal" onClick='closeEditModal();'>Cancel</button>
-          <button type="button" class="btn btn-primary" id="ep-saveButton" onClick='saveEdit();'>Save</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" onClick='MixTape.closeEditModal();'>Cancel</button>
+          <button type="button" class="btn btn-primary" id="ep-saveButton" onClick='MixTape.saveEdit();'>Save</button>
         </div>
       </div>
     </div>
