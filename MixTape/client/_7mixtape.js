@@ -3,7 +3,7 @@ playlistMenu = null; // these are the menu containers
 clipMenu = null;
 bookmarkMenu = null;
 
-currentPlaylist = 0; // these are the current item/object
+currentPlaylist = null; // these are the current item/object
 currentClip = null;
 currentBookmark = null;
 
@@ -75,7 +75,7 @@ MixTape.setCurrentBookmark = function(bookmarkIndex){
 						currentBookmark = currentClip.bookmarks[i];
 						if(selected_bookmark_identifier == currentBookmark.name){
 							$('#' + currentBookmark.id).addClass('active');
-							$('#' + currentBookmark.id).click(deselect);
+							$('#' + currentBookmark.id).click(MixTape.deselect);
 							isNewClip = false;
 							break;
 						}
@@ -103,13 +103,15 @@ MixTape.setCurrentBookmark = function(bookmarkIndex){
 
 MixTape.setCurrentClip  = function(clipIndex){
 	console.log('In setcurrentclip');
+
 	currentClipIndex = clipIndex;
 	var prevClip = currentClip;
 	if (clipIndex >= 0){
-		currentClip = currentPlaylist.clips[clipIndex];
+		currentClip = currentPlaylist.clips()[clipIndex];
 		console.log('Have set currentClip to something');
+		console.log(currentClip);
 		// also set the source to the correct file
-		if (currentClip.bookmarks.length > 0){
+		if (currentClip.bookmarks().length > 0){
 			MixTape.setCurrentBookmark(-1);
 		}
 		else{
@@ -136,7 +138,8 @@ MixTape.setCurrentClip  = function(clipIndex){
 MixTape.setCurrentPlaylist = function(playlistIndex){
 	if (playlistIndex >= 0){
 		currentPlaylist = playlists[playlistIndex];
-		if (currentPlaylist.clips.length > 0){
+		console.log(currentPlaylist);
+		if (currentPlaylist.clips().length > 0){
 			MixTape.setCurrentClip(0);
 		}else{
 			MixTape.setCurrentClip(-1);
@@ -240,17 +243,20 @@ MixTape.addItemToMenu = function(menu, item){
 	var itemSubmenu = document.createElement('ul');
 	var itemPlay = document.createElement('a');
 	var itemEdit = document.createElement('a');
-	var itemRemove = document.createElement('a');	
+	var itemRemove = document.createElement('a');
+	var itemPlayIconBefore = document.createElement('span');	
 	var itemEditIcon = document.createElement('span');
 	var itemPlayIcon = document.createElement('span');
 	var itemRemoveIcon = document.createElement('span');
 	
-	if(item.name.split('-')[0] == 'url'){
+
+	if(item.name().split('-')[0] == 'url'){
 		itemText.innerHTML = item.url;
 	}
 	else{
-		itemText.innerHTML = item.name;
+		itemText.innerHTML = item.name();
 	}
+	itemPlayIconBefore.setAttribute('class', "glyphicon glyphicon-play music-item-play-icon");
 	itemContainer.setAttribute('class', "list-group-item" + " " + item.type);
 	itemSubmenu.setAttribute('class', "list-group-submenu");
 
@@ -269,15 +275,15 @@ MixTape.addItemToMenu = function(menu, item){
 		var selection = $(e.currentTarget.offsetParent.offsetParent);
 		var removalMenu = menuul;
 		var removalIndex = selection.index();
-		var removalType = getBackEndItem(selection[0]).type;
-		var removalName = getBackEndItem(selection[0]).name;
+		var removalType = MixTape.getBackEndItem(selection[0]).type;
+		var removalName = MixTape.getBackEndItem(selection[0]).name;
 		
 		var confirmationMessage;
 		console.log(selection[0]);
 
 		bootbox.confirm("Are you sure you want to remove " +  removalType + " " + removalName + "?", function(result) {
   			if (result){
-  				removeItemFromMenu(removalMenu,selection,removalIndex);
+  				MixTape.removeItemFromMenu(removalMenu,selection,removalIndex);
   			}
 		});
 
@@ -285,10 +291,11 @@ MixTape.addItemToMenu = function(menu, item){
 
 	});
 
-	$(itemPlay).click(function(e) {
+	$(itemPlayIconBefore).click(function(e) {
 		// var name = ($(this).text()).trim();
 		console.log('In play');
 		var playClip = $(this).parent().parent();
+		console.log(playClip);
 		MixTape.deactivate(playClip[0]);
 		MixTape.makeActive(playClip[0]);
 		MixTape.updateMenus();	
@@ -313,16 +320,32 @@ MixTape.addItemToMenu = function(menu, item){
 	itemSubmenu.appendChild(itemPlay);
 	itemSubmenu.appendChild(itemRemove);
 
+ 	itemText.insertBefore(itemPlayIconBefore,itemText.childNodes[0]);
 	itemContainer.appendChild(itemText);
+
+
+
+	$(itemContainer).hover(function(e){
+		$(itemText).children( "span" ).css( "visibility", "visible");
+	}, function(e) {
+    $(itemText).children( "span" ).css( "visibility", "hidden");
+  });
+
 	itemContainer.appendChild(itemSubmenu);
 
-	var tag = menu.id + '-' + item.nospace;
-	if(item.url){
-		tag = item.id;
-	}
-	else{
-		item.id = tag;
-	}
+	var tag = menu.id + '-' + item.id();
+		// console.log(item);
+		// console.log(item.id());
+		if(item.dbId){
+			tag = item.id();
+		}
+		else{
+			item.setId(tag);
+		}
+		
+		console.log(item.id());
+		// console.log(tag);
+
 	itemContainer.setAttribute('id', tag);
 	
 	var clicks = 0, timeOut = 200;
@@ -355,17 +378,30 @@ MixTape.addItemToMenu = function(menu, item){
 	
 	menuul.appendChild(itemContainer);
 
-	// change it to active if the active current clip or playlist
-	if (item == currentPlaylist){
-		$('#' + itemContainer.id).addClass('active');
+	var currentItem;
+	if (item.type == 'playlist') currentItem = currentPlaylist;
+	else if (item.type == 'clip') currentItem = currentClip;
+	else if (item.type == 'bookmark') currentItem = currentBookmark;
+	
+	if (currentItem){
+		if (item.dbId == currentItem.dbId){
+			$('#' + itemContainer.id).addClass('active');
+			if (item.type = 'bookmark') $('#' + itemContainer.id).click(MixTape.deselect);
+		}
 	}
-	if (item == currentClip){
-		$('#' + itemContainer.id).addClass('active');
-	}
-	if (item == currentBookmark){
-		$('#' + itemContainer.id).addClass('active');
-		$('#' + itemContainer.id).click(deselect);
-	}
+
+	// // change it to active if the active current clip or playlist
+	// if (item == currentPlaylist){
+	// 	$('#' + itemContainer.id).addClass('active');
+	// }
+	// else if (item == currentClip){
+	// 	console.log('Getting to set active.........!');
+	// 	$('#' + itemContainer.id).addClass('active');
+	// }
+	// else if (item == currentBookmark){
+	// 	$('#' + itemContainer.id).addClass('active');
+	// 	$('#' + itemContainer.id).click(MixTape.deselect);
+	// }
 }
 
 MixTape.deselect = function(bookmark){
@@ -400,8 +436,8 @@ MixTape.makeActive = function(item){
 		}
 		else if(item.classList.contains('clip')){
 			// the things on the clip menu
-			for(var i = 0; i < playlists[currentPlaylistIndex].clips.length; i++){
-				if (item.id == playlists[currentPlaylistIndex].clips[i].id){
+			for(var i = 0; i < playlists[currentPlaylistIndex].clips().length; i++){
+				if (item.id == playlists[currentPlaylistIndex].clips()[i].id()){
 					// set the matching index
 					MixTape.setCurrentClip(i);
 				}
@@ -409,8 +445,8 @@ MixTape.makeActive = function(item){
 		}
 		else if(item.classList.contains('bookmark')){
 			// the things on the bookmark menu
-			for(var i = 0; i < playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks.length; i++){
-				if (item.id == playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks[i].id){
+			for(var i = 0; i < playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks().length; i++){
+				if (item.id == playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks()[i].id()){
 					// set the matching index
 					MixTape.setCurrentBookmark(i);
 				}
@@ -449,20 +485,18 @@ MixTape.removeItemFromMenu = function(removalMenu, item, removalIndex){
 	var newSelection = null;
 	
 	//Removing the backend component
-	var removalBackEnd = getBackEndItem(item[0]);
+	var removalBackEnd = MixTape.getBackEndItem(item[0]);
 	if(removalBackEnd.type == 'bookmark'){
-		deselect(removalBackEnd);
+		MixTape.deselect(removalBackEnd);
 	}
 	var isCurrentlyPlayedClip = (removalBackEnd.src == currentSrc);
 	var isContainerPlatlist = false;
 	if (removalBackEnd.type == 'playlist'){
-		console.log(removalBackEnd.clips.indexOf(currentClip));
 		if (removalBackEnd.clips.indexOf(currentClip)>=0){
 			isContainerPlatlist = true;
 		}
 	}
-	console.log(isContainerPlatlist);
-	console.log(isCurrentlyPlayedClip);
+
 	removalBackEnd.remove();
 	
 	if(item[0].classList.contains('playlist')){		
@@ -478,18 +512,18 @@ MixTape.removeItemFromMenu = function(removalMenu, item, removalIndex){
 	}else if (($(removalMenu).children()[removalIndex - 1] != null)){
 		newSelection = $(removalMenu).children()[removalIndex - 1];
 	}else{
-		setCurrentItemToNull(item[0]);
+		MixTape.setCurrentItemToNull(item[0]);
 	}
 	//Setting new selection
-	deactivate(newSelection);
-	makeActive(newSelection);
-	updateMenus();
+	MixTape.deactivate(newSelection);
+	MixTape.makeActive(newSelection);
+	MixTape.updateMenus();
 	
 
 	//If the removed clip is playing, the src should be reset. Also need to check if it is contained 
 	// a removed playlist.
 	if (isContainerPlatlist || isCurrentlyPlayedClip){
-		setCurrentClipPlayer();
+		MixTape.setCurrentClipPlayer();
 		document.getElementById('bookmark_marker_start').style.visibility = 'hidden';
 		document.getElementById('bookmark_marker_end').style.visibility = 'hidden';
 		document.getElementById('bookmark_time_end').style.visibility = 'hidden';
@@ -502,22 +536,21 @@ MixTape.removeItemFromMenu = function(removalMenu, item, removalIndex){
 
 MixTape.updateMenus = function(){
 	$('.list-group-item').remove();
-	console.log('update menus');
 
 	// iterate through all the playlists and add the clips
 	for(var p = 0; p < playlists.length; p++){
 		MixTape.addItemToMenu(playlistMenu, playlists[p]);
 	}
 	if (currentPlaylist != null){
-		if (currentPlaylist.clips != null){
+		if (currentPlaylist.clips() != null){
 		// add all the active clips
-		for(var c = 0; c < currentPlaylist.clips.length; c++){
-			MixTape.addItemToMenu(clipMenu, currentPlaylist.clips[c]);
+		for(var c = 0; c < currentPlaylist.clips().length; c++){
+			MixTape.addItemToMenu(clipMenu, currentPlaylist.clips()[c]);
 		}
 		if (currentClip != null){
-			if (currentClip.bookmarks != null){
+			if (currentClip.bookmarks() != null){
 			//add all the active bookmarks
-			for(var b = 0; b < currentClip.bookmarks.length; b++){
+			for(var b = 0; b < currentClip.bookmarks().length; b++){
 				MixTape.addItemToMenu(bookmarkMenu, currentClip.bookmarks[b]);
 			}
 		}

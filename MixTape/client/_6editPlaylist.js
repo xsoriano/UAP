@@ -4,20 +4,20 @@
 MixTape.editPlaylist = function(){
 	if(currentPlaylist){
 		$('#editPlaylistWindow').modal('show');
-		fillDummyEditDialog();
+		MixTape.fillDummyEditDialog();
 		// put in the current playlist name		
 		document.getElementById('edit-playlist-name').value = currentPlaylist.name;
 		// add the clips from the current playlist
 		if(currentPlaylist.clips){
 			for(var i = 0; i < currentPlaylist.clips.length; i++){
 				// select the matching clips
-				if(sourceClipsContainsName(currentPlaylist.clips[i].name)){
-					selectEditMusic(currentPlaylist.clips[i].name);
+				if(MixTape.sourceClipsContainsName(currentPlaylist.clips[i].name)){
+					MixTape.selectEditMusic(currentPlaylist.clips[i].name);
 				}
 				else{
 					// doesn't have a corresponding clip add to the menu
 					var otherMenu = document.getElementById('ep-added-container');
-					addItemToDialog(otherMenu, currentPlaylist.clips[i].name, '', 'remove(this)');
+					MixTape.addItemToDialog(otherMenu, currentPlaylist.clips[i].name, '', 'remove(this)');
 				}
 			}
 		}
@@ -45,7 +45,7 @@ MixTape.selectEditMusic = function(buttonName){
 	button.setAttribute('onClick', 'removeEditMatching(this)');
 
 	var otherMenu = document.getElementById('ep-added-container');
-	addItemToDialog(otherMenu, button.firstChild.innerHTML, '-matching', 'removeMusic(this)');
+	MixTape.addItemToDialog(otherMenu, button.firstChild.innerHTML, '-matching', 'MixTape.removeMusic(this)');
 }
 
 MixTape.removeEditMatching = function(button){
@@ -85,7 +85,7 @@ MixTape.saveEdit = function(){
 			}
 			else{
 				var clip = new Clip().init_name(clips[i].textContent);
-				clip.addSrc('music/' + clip.name + '.mp3');
+				clip.addSrc('http://mit.edu/xsoriano/www/music/' + clip.name + '.mp3');
 				newClips.push(clip);
 			}
 
@@ -95,9 +95,9 @@ MixTape.saveEdit = function(){
 			currentPlaylist.addClip(newClips[i]);
 		}
 		setCurrentClip(0);
-		makeActive(document.getElementById(currentClip.id));
+		MixTape.makeActive(document.getElementById(currentClip.id));
 	}
-	updateMenus();
+	MixTape.updateMenus();
 }
 
 MixTape.playlistContainsClipName = function(clipname){

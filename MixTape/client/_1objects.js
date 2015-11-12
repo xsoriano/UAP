@@ -1,20 +1,43 @@
 MixTape = function() {};
 
-MixTape = {
-
-	helloWorld : function(){
-		console.log('Hello, World! This is a test for methods in the object MixTape');
-	}
-}
-
-
 Playlist = function(){
 	this.type = 'playlist';
-	this.text = '';
-	this.isBeingEdited = false;
 }
+
 Playlist.prototype = {
 	// all the prototypes functions
+	name: function(){
+		return playlistsDB.find({_id : this.dbId}).fetch()[0].name;
+	},
+
+	id: function(){
+		return playlistsDB.find({_id : this.dbId}).fetch()[0].id;
+	},
+
+	setId: function(newId){
+		playlistsDB.update(this.dbId, {$set: {id: newId} })
+
+	},
+
+	clips: function(){
+		var clipData = clipsDB.find({playlist : this.dbId}, {sort: {sortOrder: 1}}).fetch();
+		var clipObjects = new Array();
+		clipData.forEach(function(clipObject){
+			var clip = new Clip().init_existing_id(clipObject._id);
+			// console.log(clip);			
+			clipObjects.push(clip);
+
+		})
+		return clipObjects;
+	},
+	
+
+	isBeingEdited: function(){
+		return playlistsDB.find({_id : this.dbId}).fetch()[0].isBeingEdited;
+	},
+	
+	// nospace: name.split('-').join('').split(' ').join('');
+
 	addClip: function(newClip){
 		//Should we check for the existence of the clip in the clip list?. What would clip equality be in that case?
 		// How does javascript take care of this? I will just check for the name for now. -X
@@ -46,11 +69,11 @@ Playlist.prototype = {
 		this.text = "";
 	},
 
-	updateName: function(nameString){
-		this.name = nameString;
-		this.id = nameString.split('-').join('').split(' ').join('');
-		this.nospace = nameString.split('-').join('').split(' ').join('');
-	},
+	// updateName: function(nameString){
+	// 	this.name = nameString;
+	// 	this.id = nameString.split('-').join('').split(' ').join('');
+	// 	// this.nospace = nameString.split('-').join('').split(' ').join('');
+	// },
 
 	changeIsBeingEdited: function(){
 		this.isBeingEdited = !(this.isBeingEdited);
@@ -67,25 +90,60 @@ Playlist.prototype = {
 	}
 
 }
-// constructor with just the name
-Playlist.prototype.init_name = function(name){
-	this.name = name;
-	this.id = name.split('-').join('').split(' ').join('');
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.clips = [];
-	this.isBeingEdited = false;
+
+Playlist.prototype.init_new = function(name){
+	var ownerId = Meteor.userId();
+	playlistsDB.insert({
+		owner: ownerId,
+		name : name,
+		id: name.split('-').join('').split(' ').join(''),
+		sortOrder : playlistsDB.find({owner : ownerId}).count() +1,
+		text: '',
+		isBeingEdited: false
+	});
+	this.dbId = playlistsDB.find({name : name}, {owner : Meteor.userId()}).fetch()[0]._id;
+
+
 	return this;
 }
 
 // clip object
 Clip = function(){
 	this.type = 'clip';
-	this.text = '';
-	this.isBeingEdited = false;
 }
 
 Clip.prototype = {
 	// declare all the functions that clip should support to inherit
+	name: function(){
+		return clipsDB.find({_id : this.dbId}).fetch()[0].name;
+	},
+
+	playlist: function(){
+		var playlistId = clipsDB.find({_id : this.dbId}).fetch()[0].playlist;
+		return playlistsDB.find({_id : playlistId}).fetch()[0].name;
+	},
+
+	id: function(){
+		return clipsDB.find({_id : this.dbId}).fetch()[0].id;
+	},
+
+	setId: function(newId){
+		clipsDB.update(this.dbId, {$set: {id: newId} })
+
+	},
+
+	bookmarks: function(){
+		return bookmarksDB.find({clip : this.dbId}, {sort: {sortOrder: 1}}).fetch();
+	},
+
+	isBeingEdited: function(){
+		return clipsDB.find({_id : this.dbId}).fetch()[0].isBeingEdited;
+	},
+	source: function(){
+		return clipsDB.find({_id : this.dbId}).fetch()[0].source;
+	},
+
+
 	addBookmark: function(newBookmark){
 		//Should we check for the existence of the clip in the clip list?. What would clip equality be in that case?
 		// How does javascript take care of this? I will just check for the name for now. -
@@ -128,7 +186,7 @@ Clip.prototype = {
 		this.name = nameString;
 		if(this.url == null){
 			if(this.playlist){
-				this.id = this.playlist.id + '-' + nameString.split('-').join('').split(' ').join('');	
+				this.id = this.playlist.id() + '-' + nameString.split('-').join('').split(' ').join('');	
 			}
 			else{
 				this.id = nameString.split('-').join('').split(' ').join('');			
@@ -141,7 +199,7 @@ Clip.prototype = {
 	updatePlaylist: function(playlist){
 		this.playlist = playlist;
 		if(this.url == null){
-			this.id = this.playlist.id + '-' + this.name.split('-').join('').split(' ').join('');			
+			this.id = this.playlist.id() + '-' + this.name.split('-').join('').split(' ').join('');			
 		}
 	},
 
@@ -159,42 +217,24 @@ Clip.prototype = {
 
 };
 
-Clip.prototype.init_name = function(name){
-	this.name = name;
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.bookmarks = [];
-	this.isBeingEdited = false;
+
+Clip.prototype.init_new = function(name, playlist, src){
+	console.log(playlist);
+	var playlistId = playlistsDB.find({name : playlist.name()}).fetch()[0]._id;
+	clipsDB.insert({
+		owner : Meteor.userId(),
+		playlist : playlistId,
+		name : name,
+		id: name.split('-').join('').split(' ').join(''),
+		source : src,
+		sortOrder : clipsDB.find({playlist : playlistId}).count() +1
+	});
+	this.dbId = clipsDB.find({name : name}, {playlist : playlistId}, {owner : Meteor.userId()}).fetch()[0]._id;
 	return this;
 }
 
-Clip.prototype.init_url = function(name, url){
-	this.name = name;
-	this.url = url;
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.bookmarks = [];
-	this.isBeingEdited = false;
-	return this;
-}
-
-Clip.prototype.init_url_playlist = function(id, url, playlist){
-	this.name = url;
-	this.id = id;
-	this.url = url;
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.bookmarks = [];
-	this.isBeingEdited = false;
-	this.playlist = playlist;
-	return this;
-}
-
-Clip.prototype.init_name_playlist = function(name, playlist){
-	this.name = name;
-	this.playlist = playlist; //This is the parent/container playlist.
-	//This can possibly be the id that will be given to the corresponding html tag: P<playlist name>C<clip name>B<bookmark name>
-	this.id = this.playlist.id + '-' + name.split('-').join('').split(' ').join('');
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.bookmarks = [];
-	this.isBeingEdited = false;
+Clip.prototype.init_existing_id = function(id){
+	this.dbId = id;
 	return this;
 }
 
@@ -270,7 +310,7 @@ Bookmark.prototype.init_name_clip_playlist = function(name, clip, playlist){
 	this.nospace = name.split('-').join('').split(' ').join('');
 	this.clip = clip;
 	this.playlist = playlist;
-	this.id = this.playlist.id + '-' + this.clip.id + '-' + name.split('-').join('').split(' ').join('');
+	this.id = this.playlist.id() + '-' + this.clip.id + '-' + name.split('-').join('').split(' ').join('');
 	this.isBeingEdited = false;
 	return this;
 }

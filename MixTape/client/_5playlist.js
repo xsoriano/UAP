@@ -1,8 +1,6 @@
 // everything that is dealing with or updating the new playlist dialog is going in here...
 
-  // This code only runs on the client
-  console.log("hello client!");
-  Template.topBanner.events({
+  Template.topNav.events({
   	'click #topBanner-newPlaylistBtn': function(){
        MixTape.newPlaylist();
        //  $('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
@@ -11,7 +9,7 @@
   });
 
 
-  Template.topBanner.helpers({
+  Template.topNav.helpers({
 
     
   });
@@ -42,16 +40,16 @@ MixTape.addItemToDialog = function(computer, item, matching, func){
 // toggle it active and also add to the other side of the menu
 MixTape.selectMusic= function(button){
 	$(button).toggleClass('active');  
-	button.setAttribute('onClick', 'removeMatching(this)');
+	button.setAttribute('onClick', 'MixTape.removeMatching(this)');
 
 	var otherMenu = document.getElementById('np-added-container');
-	MixTape.addItemToDialog(otherMenu, button.firstChild.innerHTML, '-matching', 'removeMusic(this)');
+	MixTape.addItemToDialog(otherMenu, button.firstChild.innerHTML, '-matching', 'MixTape.removeMusic(this)');
 }
 
 MixTape.removeMatching= function(button){
 	document.getElementById(button.id + '-matching').remove();
 	$(button).toggleClass('active');
-	document.getElementById(button.id).setAttribute('onClick', 'selectMusic(this)');
+	document.getElementById(button.id).setAttribute('onClick', 'MixTape.selectMusic(this)');
 }
 
 MixTape.removeMusic= function(button){
@@ -61,14 +59,13 @@ MixTape.removeMusic= function(button){
 	otherid.pop();
 	otherid = otherid.join('-');
 	var otheritem = document.getElementById(otherid);
-	otheritem.setAttribute('onClick', 'selectMusic(this)');
+	otheritem.setAttribute('onClick', 'MixTape.selectMusic(this)');
 	$('#' + otherid).toggleClass('active');
 }
 
 
 MixTape.savePlaylists = function(){
-// <<<<<<< HEAD
-// =======
+console.log('Debugging the save playlist');
 if ($('#newPlaylistWindow').hasClass('in')){
 		// this means the the dialog was actually open and to carry out the save action
 		$('#newPlaylistWindow').modal('hide'); // close the dialog box
@@ -83,7 +80,7 @@ if (playlistName == ''){
 			playlistName = playlistName + '-1';
 		}
 		document.getElementById('recipient-name').value = '';
-		var playlist = new Playlist().init_name(playlistName);
+		var playlist = new Playlist().init_new(playlistName);
 		for (var i = 0; i < clipsToAdd.length; i++){
 			// do the check for url
 			var clip;
@@ -92,22 +89,24 @@ if (playlistName == ''){
 				clip = new Clip().init_url_playlist('url-' + name, clipsToAdd[i].textContent, playlist);
 			}
 			else{
-				clip = new Clip().init_name_playlist(clipsToAdd[i].textContent, playlist);
+				var name = clipsToAdd[i].textContent;
+				clip = new Clip().init_new(name, playlist, 'http://mit.edu/xsoriano/www/music/' + name + '.mp3');
 			}
-			clip.addSrc('http://mit.edu/xsoriano/www/music/' + clip.name + '.mp3');
-			playlist.addClip(clip);
+			// clip.addSrc();
+			//playlist.addClip(clip);
 		}
 		// add a new playlist for now
 		// checking should be implemented
 		playlists.push(playlist);
 		MixTape.setCurrentPlaylist(playlists.length - 1);
+		console.log(clipsToAdd.length);
 		if (clipsToAdd.length > 0){
 			MixTape.setCurrentClip(0);
 		}
 		MixTape.updateMenus();
-		MixTape.makeActive(document.getElementById(playlists[playlists.length - 1].id));
+		MixTape.makeActive(document.getElementById(playlists[playlists.length - 1].id()));
 		if (clipsToAdd.length > 0){
-			MixTape.makeActive(document.getElementById(playlists[playlists.length - 1].clips[0].id));
+			MixTape.makeActive(document.getElementById(playlists[playlists.length - 1].clips[0].id()));
 		}
 	}
 }

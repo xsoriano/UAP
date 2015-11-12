@@ -1,9 +1,8 @@
-var musicfiles = ['Clocking-I', 'Clocking-II', 'Foundry-TXST', 'MackeySopSaxCto-1-Prelude', 'MackeySopSaxCto-2-Felt', 'MackeySopSaxCto-3-Metal', 'MackeySopSaxCto-4-Wood', 'MackeySopSaxCto-5-Finale','NightOnFire', 'ShelteringSky-TXST', 'UNCGHymn'];
-var fileEnding = '.mp3';
-var folder = 'http://mit.edu/xsoriano/www/music';
-var dialogMenu;
+musicfiles = ['Clocking-I', 'Clocking-II', 'Foundry-TXST', 'MackeySopSaxCto-1-Prelude', 'MackeySopSaxCto-2-Felt', 'MackeySopSaxCto-3-Metal', 'MackeySopSaxCto-4-Wood', 'MackeySopSaxCto-5-Finale','NightOnFire', 'ShelteringSky-TXST', 'UNCGHymn'];
+fileEnding = '.mp3';
+folder = 'http://mit.edu/xsoriano/www/music';
+dialogMenu = null;
 
-console.log('Loading dummy')
 
 MixTape.createDummyItems = function (){
 	// generate the playlists (Doing Playlist 1 & Playlist 2)
@@ -16,7 +15,7 @@ MixTape.createDummyItems = function (){
 		// add 3 clips for now
 		var playlist = playlists[p];
 		for(var i = 0; i < musicfiles.length; i++){
-			var clip = new Clip().init_name_playlist(musicfiles[i], playlist);
+			var clip = new Clip().init_name_playlist_src(musicfiles[i], playlist, folder+musicfiles[i]+fileEnding);
 			playlist.addClip(clip);
 			console.log(clip.name);
 		}
@@ -57,6 +56,6 @@ MixTape.fillDummyEditDialog = function (){
 	dialogMenu.appendChild(ul);
 	for(var i = 0; i < musicfiles.length; i++){
 		// add each of the files
-		addItemToDialog(dialogMenu, musicfiles[i], '', 'MixTape.selectEditMusic(this)');
+		MixTape.addItemToDialog(dialogMenu, musicfiles[i], '', 'MixTape.selectEditMusic(this)');
 	}
 }

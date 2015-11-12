@@ -2,7 +2,7 @@
   <title>MixTape</title>
 </head>
 
-<body background="background.png">
+<body>
   {{> topNav}}
 
   {{> player}}
@@ -27,12 +27,12 @@
     </div>  
   </div> -->
 
-  <div id='music-container' class='container'>
+  <div class='container'>
     <div class='col-md-2 left'>
-      <div id='playlists' class="music-section">
+      <div id='playlists'>
         <ul class="nav nav-pills nav-stacked">
-          <li class="music-section-header" onClick="MixTape.newPlaylist();"><a href="#">
-            <span class="glyphicon glyphicon-plus"></span>Playlists</a>
+          <li class="active indigo" onClick="MixTape.newPlaylist();"><a href="#">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Playlists</a>
           </li>
 
           <ul class="list-group" role="menu" aria-labelledby="dropdownMenu">
@@ -42,11 +42,10 @@
     </div>
 
     <div class='col-md-7'>
-      <div id="clips" class="music-section">
+      <div id="clips">
                 <ul class="nav nav-pills nav-stacked">
-                    <li class="music-section-header active" onclick="MixTape.editPlaylist();">
-                    <a href="#">
-                        <span class="glyphicon glyphicon-plus"></span>Tracks</a>
+                    <li class="active indigo" onclick="MixTape.editPlaylist();"><a href="#">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Clips Hey!</a>
                     </li>
 
                     <ul class="list-group">
@@ -56,10 +55,10 @@
     </div>
 
     <div class='col-md-3'>
-      <div id='bookmarks' class="music-section">
+      <div id='bookmarks'>
         <ul class="nav nav-pills nav-stacked">
-          <li class="music-section-header" onClick="MixTape.focusBookmarkTextbox();"><a href="#">
-            <span class="glyphicon glyphicon-plus"></span>Bookmarks</a>
+          <li class="active indigo" onClick="MixTape.focusBookmarkTextbox();"><a href="#">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Bookmarks</a>
           </li>
 
 
@@ -72,14 +71,26 @@
     <div class='col-md-6' id='music-clip-column'>
       <div class='noselect' id='music-clip-window'>
         <ul class="nav nav-pills nav-stacked">
-          <li class="active indigo"><a>Editing Window</a></li>
+          <li id="edWindow_heading" class="active indigo"><a>Editing Window</a></li>
           <div class="music_controls">
             <div class="bookmark_background" id="bookmark_background_id">
               <button type="button" class= "btn btn-info btn-lg" id="btnBookmark">Add Bookmark</button>
               <input id="inputStartTime" type="text" placeholder="Start Time"/> 
               <input id="inputEndTime" type="text" placeholder="End TIme"/>
             </div>
+
             
+          </div>
+                <div class="track_background" id="track_background_id">
+            <div class="track" id="track_id"></div>
+            
+            <div class="progress_bar" id="progress_bar_id"></div>
+            <div class="progress_thumb" id="progress_thumb_id"></div>
+            <div class="bookmark_marker" id="bookmark_marker_start"><span class="glyphicon glyphicon-triangle-top"></span></div>
+            <div id="bookmark_time_start"></div>
+            <div id="bookmark_time_end"></div>
+            <div class="bookmark_marker" id="bookmark_marker_end"><span class="glyphicon glyphicon-triangle-top"></span></div>
+            <div id="hover_time_id"></div>
           </div>
           
         </ul>
@@ -244,3 +255,232 @@
   <button>Click Me</button>
   <p>You've pressed the button {{counter}} times.</p>
 </template>
+
+
+/* This is the css file for mixtape*/
+.title{
+	font-family: 'Vollkorn', serif;
+}
+
+body{
+    min-height: 2000px;
+    padding-top: 143px;
+}
+
+.small_pill{
+	width: 200px;
+}
+
+.modal-backdrop.in {
+	opacity: 0;
+}
+
+.music_controls{
+	width: auto;
+	height: 150px;
+	background-color: #B8B8B8;
+	position: relative;
+}
+
+
+
+#btnBookmark{
+	border-radius: 2px;
+	padding: 10px;
+}
+
+#inputStartTime{
+	width: 125px;
+	border-radius: 5px;
+}
+
+#inputEndTime{
+	width: 125px;
+	border-radius: 5px;
+}
+
+top: 115px;
+}
+
+#hover_time_id{
+	font-size: 14px;
+	position: absolute;
+	top: 1px;
+}
+
+.noselect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.bookmark_background{
+	position: absolute;
+	height: 30px;
+	top: 10px;
+	left: 10px;
+}
+
+
+
+.bookmark_marker{
+	width: 14px;
+	height: 14px;
+	z-index: 30; /*above track*/
+}
+
+#bookmark_marker_start{
+	position: absolute;
+	visibility: hidden;
+	left:0px;
+	top:35px;
+}
+
+#bookmark_marker_end{
+	position: absolute;
+	visibility: hidden;
+	left:40px;
+	top:35px;
+}
+
+#bookmark_time_start{
+	position: absolute;
+	left:-7px;
+	top:45px;
+}
+
+#bookmark_time_end{
+	position: absolute;
+	left:33px;
+	top:45px;
+}
+
+.list-group{
+	border-left: 1px solid rgb(221, 221, 221);
+	border-right: 1px solid rgb(221, 221, 221);
+}
+
+
+.list-group-item > div{
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+
+
+.list-group-item {
+	position: relative;
+}
+
+
+.list-group-item {
+	border-left: 0px solid rgb(221, 221, 221);
+	border-right: 0px solid rgb(221, 221, 221);
+}
+
+.list-group-item:hover{
+	background-color: #EEEEEE;
+}
+
+.list-group-item:hover>.list-group-submenu{
+	visibility: visible;
+}
+
+.list-group-item:hover>.list-group-submenu > li{
+	/*display: inline;*/
+}
+
+.list-group-item >  .list-group-submenu {
+	left: 100%;
+	position: absolute;
+	top: 0;
+	padding: 0px;
+	visibility: hidden;
+	margin-top: -42px;
+	z-index: 7;
+
+}
+
+
+.list-group-submenu .list-group-submenu-item {
+	float: right;
+	white-space: nowrap;
+	position: relative; 
+	/*display: block;*/
+	padding: 10px 15px;
+	margin-bottom: -1px;
+	background-color: rgb(51, 51, 51);
+	color: rgb(235, 235, 235);
+
+}
+
+.list-group-header {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	white-space: nowrap;
+	list-style: none;
+	padding-left: 0px;
+	border-radius: 5px;
+}
+
+.list-group-header .list-group-header-item {
+	float: right;
+	white-space: nowrap;
+	display: block;
+	padding: 10px 15px;
+	margin-bottom: -1px;
+	background-color: #337AB7;
+	color: rgb(235, 235, 235);
+	border-radius: 5px;
+}
+
+
+
+.list-group-submenu .list-group-submenu-item.primary {
+	color: rgb(255, 255, 255);
+	/*background-color: rgb(63, 81, 181); */
+	background-color: rgb(0,0,0);
+	z-index: 4000;
+}
+.list-group-submenu .list-group-submenu-item.success {
+	
+	color: rgb(255, 255, 255);
+	background-color: rgb(92, 184, 92);
+	z-index: 4000;
+}
+.list-group-submenu .list-group-submenu-item.info {
+	color: rgb(255, 255, 255);
+	background-color: rgb(57, 179, 215);
+}
+.list-group-submenu .list-group-submenu-item.warning {
+	color: rgb(255, 255, 255);
+	background-color: rgb(240, 173, 78);
+	z-index: 4000;
+}
+.list-group-submenu .list-group-submenu-item.danger {
+	color: rgb(255, 255, 255);
+	background-color: rgb(217, 83, 79);
+	z-index: 4000;
+}
+
+/* fix the borders and the restate usage*/
+@media (min-width: 100px){
+	.container {
+		width: 100%;
+	}
+}
+
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+	position: relative;
+	min-height: 1px;
+	padding-right: 7px;
+	padding-left: 7px;
+}
+
+.col-md-2.left{
+	padding-left: 0px;
+}

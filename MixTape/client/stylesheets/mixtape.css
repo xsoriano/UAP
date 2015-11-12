@@ -3,8 +3,22 @@
 	font-family: 'Vollkorn', serif;
 }
 
-.jumbotron h1{
-	font-size: 60pt;
+body{
+    min-height: 500px;
+    height:100vh;
+    padding-top: 143px;
+    background-size:cover;
+}
+
+.music-section{
+	background: rgba(223, 224, 223, 0.7);
+	border-radius: 4px;
+}
+
+.music-section-header > a > span{
+	margin-right:5px; 
+	padding-left: 7px; 
+	padding-right: 7px;
 }
 
 .small_pill{
@@ -22,13 +36,19 @@
 	position: relative;
 }
 
-#btnPlay{
-	width: 50px;
-	border-radius: 20px;
-	position: absolute;
-	left: 41%;
-	top: 75px;
+.music-item-play-icon{
+	margin-right: 5px;
+	padding: 7px;
+	color: rgb(157, 157, 157);
+	visibility: hidden;
 }
+
+.music-item-play-icon:hover{
+	color: black;
+	cursor: pointer; cursor: hand
+}
+
+
 
 #btnBookmark{
 	border-radius: 2px;
@@ -45,31 +65,8 @@
 	border-radius: 5px;
 }
 
-.time_passed{
-	width: 50px;
-	height: 45px;
-	font-weight: bold;
-	font-size: 17px;
-	position: absolute;
-	left: 30%;
-	top: 115px;
-}
 
-.time_length{
-	width: 50px;
-	height: 45px;
-	font-weight: bold;
-	font-size: 17px;
-	position: absolute;
-	left: 55%;
-	top: 115px;
-}
 
-#hover_time_id{
-	font-size: 14px;
-	position: absolute;
-	top: 1px;
-}
 
 .noselect {
 	-webkit-touch-callout: none;
@@ -87,42 +84,7 @@
 	left: 10px;
 }
 
-.track_background{
-	width: auto;
-	height: 75px;
-	padding-top: 10px;
-	position: relative;
-}
 
-.track{
-	width: 100%;
-	height: 10px;
-	background-color: #E8EAF6;	
-	z-index: 4; /*Below progress bar*/
-	position: absolute;
-	top: 25px;
-}
-
-.progress_bar{
-	width: 0px;
-	height: 10px;
-	background-color: #3F51B5;
-	z-index: 5; /*above track*/
-	position: absolute;
-	top: 25px;
-}
-
-.progress_thumb{
-	width: 15px;
-	height: 15px;
-	background-color: white;
-	z-index: 5; /*above track*/
-	position: absolute;
-	left:0px;
-	top:22px;
-	border: 2px #3F51B5 solid;
-	cursor: pointer;
-}
 
 .bookmark_marker{
 	width: 14px;
@@ -198,7 +160,7 @@
 	padding: 0px;
 	visibility: hidden;
 	margin-top: -42px;
-	z-index: 7;
+	/*z-index: 7;*/
 
 }
 
@@ -242,13 +204,13 @@
 	color: rgb(255, 255, 255);
 	/*background-color: rgb(63, 81, 181); */
 	background-color: rgb(0,0,0);
-	z-index: 4000;
+	/*z-index: 4000;*/
 }
 .list-group-submenu .list-group-submenu-item.success {
 	
 	color: rgb(255, 255, 255);
 	background-color: rgb(92, 184, 92);
-	z-index: 4000;
+	/*z-index: 4000;*/
 }
 .list-group-submenu .list-group-submenu-item.info {
 	color: rgb(255, 255, 255);
@@ -257,12 +219,12 @@
 .list-group-submenu .list-group-submenu-item.warning {
 	color: rgb(255, 255, 255);
 	background-color: rgb(240, 173, 78);
-	z-index: 4000;
+	/*z-index: 4000;*/
 }
 .list-group-submenu .list-group-submenu-item.danger {
 	color: rgb(255, 255, 255);
 	background-color: rgb(217, 83, 79);
-	z-index: 4000;
+	/*z-index: 4000;*/
 }
 
 /* fix the borders and the restate usage*/

@@ -22,3 +22,43 @@
 	background-color: #E8EAF6; /* google 50 indigo */
   	border-color: #204d74;
 }
+
+
+.nav-pills>li.music-section-header>a, .nav-pills>li.music-section-header>a:focus, .nav-pills>li.music-section-header>a:hover {
+	background-color: rgba(16, 16, 16, 1);  /* google 500 music-section-header */
+	color: rgb(157, 157, 157);
+	border-radius: 4px;
+}
+
+.nav-pills>li.music-section-header>a:hover {
+	background-color: rgba(16, 16, 16, 1);  /* google 500 music-section-header */
+	color: white;
+	border-radius: 4px;
+}
+
+.list-group-item.music-section-header, .list-group-item.music-section-header:focus, .list-group-item.music-section-header:hover {
+	color: black;
+	background-color: rgba(16, 16, 16, 1);  /* google 50 music-section-header */
+	border-color: rgba(16, 16, 16, 1); 
+	border-radius: 4px;
+}
+
+
+.btn-primary.music-section-header.focus, .btn-primary.music-section-header:hover, .btn-primary.music-section-header:active, .btn-primary.music-section-header:focus, .btn-primary.active.music-section-header {
+	background-color: rgba(16, 16, 16, 1);  /* google 500 music-section-header */
+  	border-color: rgba(16, 16, 16, 1); 
+  	border-radius: 4px;
+}
+
+.music-section-header:hover{
+	background-color: rgba(16, 16, 16, 1);  /* google 50 music-section-header */
+  	border-color: rgba(16, 16, 16, 1); 
+  	border-radius: 4px;
+}
+
+.btn-primary.focus, .btn-primary.music-section-header:hover, .btn-primary.music-section-header:active, .btn-primary.music-section-header:focus, .btn-primary.active.music-section-header {
+	background-color: rgba(16, 16, 16, 1);  /* google 500 music-section-header */
+  	border-color: rgba(16, 16, 16, 1); 
+
+  	border-radius: 4px;
+}

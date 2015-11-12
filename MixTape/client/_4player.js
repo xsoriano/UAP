@@ -78,7 +78,8 @@ $(document).ready(function() {
 
     	// to make the editing window show the name of the clip
     	if (currentClip){
-	    	$("#edWindow_heading").html("<a>Editing Window: "+ currentClip.name + "</a>");
+	    	$("#track-name-container").html("<a>"+ currentClip.name() + "</a>");
+	    	basicBehavior.centerTrackName();
     	}
 
     	$(input_end_time).val("");
@@ -480,7 +481,7 @@ MixTape.clickTrack= function(e){
 		clip_time_played_ms = (clip_time_length_ms*progress_percent);
 		clip_time_played_ms = Math.floor(clip_time_played_ms/1000)*1000;
 		
-		updateTimePassed();
+		MixTape.updateTimePassed();
 
 		var clip = document.getElementById('current-clip');
 		clip.currentTime = Math.floor(clip_time_played_ms/1000);
@@ -517,11 +518,11 @@ console.log('Setting current clip player');
 		selectedPlaylist = null;
 		//End of change by Xavier
 	} else {
-		document.getElementById('current-clip').src = currentClip.src;
+		document.getElementById('current-clip').src = currentClip.source();
 		//Change made by Xavier
 		waitForMetadata = true;
-		currentSrc = currentClip.src;
-		selectedPlaylist = currentClip.playlist;
+		currentSrc = currentClip.source();
+		selectedPlaylist = currentClip.playlist();
 
 		//End of change by Xavier
 	}

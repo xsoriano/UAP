@@ -1,3 +1,8 @@
+playlistsDB = new Mongo.Collection('playlists');
+clipsDB = new Mongo.Collection('clips');
+bookmarksDB = new Mongo.Collection('bookmarks');
+
+
 if (Meteor.isClient) {
   // counter starts at 0
   Session.setDefault('counter', 0);
@@ -17,7 +22,40 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
+
+  Meteor.startup(function() {
+
+    return Meteor.methods({
+
+      removeAllPlaylists: function() {
+
+        return playlistsDB.remove({});
+
+      },
+
+      removeAllClips: function() {
+
+        return clipsDB.remove({});
+
+      },
+
+      removeAllBookmarks: function() {
+
+        return bookmarksDB.remove({});
+
+      },
+
+      removeAllMusic: function() {
+
+        removeAllPlaylists();
+        removeAllClips();
+        removeAllBookmarks();
+
+      }
+
+    });
+
   });
+
 }
+
