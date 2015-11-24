@@ -88,7 +88,7 @@ $(document).ready(function() {
     	playingClip = currentClip;
 
     	//Gabrielj. Testing something.
-    	MixTape.setCurrentBookmark(-1);
+    	// MixTape.setCurrentBookmark(-1);
 
     	//isLoadingMetadata = false;
 
@@ -115,21 +115,25 @@ MixTape.addNewBookmark= function(e){
 		console.log(array_end_time[1]);
 		if (array_end_time == "" & array_start_time == ""){
 			var clip = document.getElementById('current-clip');
+			console.log(clip);
 			start_time = clip.currentTime*1000; //In milliseconds
 			end_time = clip_time_length_ms; //In milliseconds
 			var minutes = Math.floor(clip_time_played_ms/(60*1000));
 			var seconds = Math.floor(clip_time_played_ms/1000)%60;
 			var bookmark_name = 'Bookmark ' + (playingClip.bookmarks.length+1) + ' '+minutes+'m'+seconds+'s';
-			var new_bookmark = new Bookmark().init_name_times(bookmark_name, start_time, end_time);
-
-			playingClip.addBookmark(new_bookmark);
+			var new_bookmark = new Bookmark().init_new(bookmark_name, currentClip, start_time, end_time);
+			// This is not needed anymore, because bookmarks in the DB know who their clip is.
+			// playingClip.addBookmark(new_bookmark);
 			for(var i = 0; i < playlists.length; i++){
 				if(playingClip.playlist.id == playlists[i].id){
 					MixTape.setCurrentPlaylist(i);
 				}
 			}
-			for(var i = 0; i < playingClip.playlist.clips.length; i++){
-				if(playingClip.id == playingClip.playlist.clips[i].id){
+			var playingClipSiblings = playingClip.siblings();
+			for(var i = 0; i < playingClipSiblings.length; i++){
+				console.log(playingClipSiblings[i].id());
+				console.log(playingClip.id);
+				if(playingClip.id == playingClipSiblings[i].id()){
 					MixTape.setCurrentClip(i);
 				}
 			}
@@ -181,10 +185,11 @@ MixTape.addNewBookmark= function(e){
 MixTape.adjustBookmarkMarkers= function(){
 	if(currentBookmark != null){
 		//Assumption that times are valid. The check happens in addNewBookmark.
-		bookmark_time_start = currentBookmark.startTime;
-		bookmark_time_end = currentBookmark.endTime;
+		bookmark_time_start = currentBookmark.startTime();
+		bookmark_time_end = currentBookmark.endTime();
 		clip_time_played_ms = bookmark_time_start;
 		var clip = document.getElementById('current-clip');
+
 		clip.currentTime = Math.floor(clip_time_played_ms/1000);
 
 		//Changung HTML

@@ -1,5 +1,10 @@
 MixTape = function() {};
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////Playlist Object///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 Playlist = function(){
 	this.type = 'playlist';
 }
@@ -107,7 +112,10 @@ Playlist.prototype.init_new = function(name){
 	return this;
 }
 
-// clip object
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////Clip Object///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 Clip = function(){
 	this.type = 'clip';
 }
@@ -123,6 +131,19 @@ Clip.prototype = {
 		return playlistsDB.find({_id : playlistId}).fetch()[0].name;
 	},
 
+	siblings: function(){
+		var playlistId = clipsDB.find({_id : this.dbId}).fetch()[0].playlist;
+		var clipData = clipsDB.find({playlist : playlistId}, {sort: {sortOrder: 1}}).fetch();
+		var clipObjects = new Array();
+		clipData.forEach(function(clipObject){
+			var clip = new Clip().init_existing_id(clipObject._id);
+			// console.log(clip);			
+			clipObjects.push(clip);
+
+		})
+		return clipObjects;
+	},
+
 	id: function(){
 		return clipsDB.find({_id : this.dbId}).fetch()[0].id;
 	},
@@ -133,8 +154,18 @@ Clip.prototype = {
 	},
 
 	bookmarks: function(){
-		return bookmarksDB.find({clip : this.dbId}, {sort: {sortOrder: 1}}).fetch();
+		var bookmarkData = bookmarksDB.find({clip : this.dbId}, {sort: {sortOrder: 1}}).fetch();
+		var bookmarkObjects = new Array();
+		bookmarkData.forEach(function(bookmarkObject){
+			var bookmark = new Bookmark().init_existing_id(bookmarkObject._id);
+			// console.log(clip);			
+			bookmarkObjects.push(bookmark);
+
+		})
+		return bookmarkObjects;
 	},
+
+
 
 	isBeingEdited: function(){
 		return clipsDB.find({_id : this.dbId}).fetch()[0].isBeingEdited;
@@ -142,25 +173,26 @@ Clip.prototype = {
 	source: function(){
 		return clipsDB.find({_id : this.dbId}).fetch()[0].source;
 	},
-
-
-	addBookmark: function(newBookmark){
-		//Should we check for the existence of the clip in the clip list?. What would clip equality be in that case?
-		// How does javascript take care of this? I will just check for the name for now. -
-		//GABRIEL Debug
-		console.log("Adding bookmark to " + this.name);
-		var canAdd = true;
-		for (var i = 0; i < this.bookmarks.length; i++){
-			if (this.bookmarks[i].name == newBookmark.name){
-				canAdd = false;
-			}
-		} 
-		if (canAdd) {
-			this.bookmarks.push(newBookmark);
-			newBookmark.updateClip(this);
-		}
-		return canAdd;
+	isBeingEdited: function(){
+		return clipsDB.find({_id : this.dbId}).fetch()[0].isBeingEdited;
 	},
+
+	//We dont need to add bookmarks anymore. They know who they belong to.
+	// addBookmark: function(newBookmark){
+
+	// 	var canAdd = (bookmarksDB.find({"name": newBookmark, "clip": this.dbId}, {limit:1}).count() == 0);
+	// 	//This was the non DB way of checking if the bookmark is already there.
+	// 	// for (var i = 0; i < this.bookmarks.length; i++){
+	// 	// 	if (this.bookmarks[i].name == newBookmark.name){
+	// 	// 		canAdd = false;
+	// 	// 	}
+	// 	// } 
+	// 	if (canAdd) {
+	// 		this.bookmarks.push(newBookmark);
+	// 		//newBookmark.updateClip(this);
+	// 	}
+	// 	return canAdd;
+	// },
 
 	removeBookmark: function(toRemoveBookmark){
 		var index = this.bookmarks.indexOf(toRemoveBookmark);
@@ -219,15 +251,19 @@ Clip.prototype = {
 
 
 Clip.prototype.init_new = function(name, playlist, src){
-	console.log(playlist);
-	var playlistId = playlistsDB.find({name : playlist.name()}).fetch()[0]._id;
+	
+	//var playlistId = playlistsDB.find({name : playlist.name()}).fetch()[0]._id;
+	// It seems that we can get away with just finding the dbId of the passed playlist.
+	var playlistId = playlist.dbId;
 	clipsDB.insert({
 		owner : Meteor.userId(),
 		playlist : playlistId,
 		name : name,
 		id: name.split('-').join('').split(' ').join(''),
 		source : src,
-		sortOrder : clipsDB.find({playlist : playlistId}).count() +1
+		sortOrder : clipsDB.find({playlist : playlistId}).count() +1,
+		text: '',
+		isBeingEdited: false
 	});
 	this.dbId = clipsDB.find({name : name}, {playlist : playlistId}, {owner : Meteor.userId()}).fetch()[0]._id;
 	return this;
@@ -238,15 +274,58 @@ Clip.prototype.init_existing_id = function(id){
 	return this;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////Bookmark Object///////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 Bookmark  = function(){
 	this.type = 'bookmark';
-	this.text = '';
-	this.startTime = -1; //In milliseconds
-	this.endTime = -1; //In milliseconds
-	this.isBeingEdited = false;
+	// this.startTime = -1; //In milliseconds
+	// this.endTime = -1; //In milliseconds
+	// this.isBeingEdited = false;
 }
 
 Bookmark.prototype = {
+	name: function(){
+		return bookmarksDB.find({_id : this.dbId}).fetch()[0].name;
+	},
+
+	clip: function(){
+		var clipId = bookmarksDB.find({_id : this.dbId}).fetch()[0].clip;
+		return clipsDB.find({_id : clipId}).fetch()[0].name;
+	},
+
+	id: function(){
+		return bookmarksDB.find({_id : this.dbId}).fetch()[0].id;
+	},
+
+	setId: function(newId){
+		bookmarksDB.update(this.dbId, {$set: {id: newId} })
+
+	},
+	startTime: function(){
+		return bookmarksDB.find({_id : this.dbId}).fetch()[0].startTime;
+	},
+	endTime: function(){
+		return bookmarksDB.find({_id : this.dbId}).fetch()[0].endTime;
+	},
+	isBeingEdited: function(){
+		return bookmarksDB.find({_id : this.dbId}).fetch()[0].isBeingEdited;
+	},
+	siblings: function(){
+		var clipId = bookmarksDB.find({_id : this.dbId}).fetch()[0].clip;
+		var bookmarkData = bookmarksDB.find({clip : clipId}, {sort: {sortOrder: 1}}).fetch();
+		var bookmarkObjects = new Array();
+		bookmarkData.forEach(function(bookmarkObject){
+			var bookmark = new Bookmark().init_existing_id(bookmarkObject._id);
+			// console.log(clip);			
+			bookmarkObjects.push(bookmark);
+
+		})
+		return bookmarkObjects;
+	},
+
+
 	addText: function(newText){
 		this.text = newText;
 	},
@@ -280,37 +359,26 @@ Bookmark.prototype = {
 	}	
 }
 
-Bookmark.prototype.init_name = function(name){
-	this.name = name;
-	this.isBeingEdited = false;
+Bookmark.prototype.init_new = function(name, clip, startTime, endTime){
+	// var clipId = clipsDB.find({name : clip.name()}).fetch()[0]._id;
+	// It seems that we can get away with just finding the dbId of the passed playlist.
+	var clipId = clip.dbId;
+	bookmarksDB.insert({
+		owner : Meteor.userId(),
+		clip : clipId,
+		name : name,
+		id: name.split('-').join('').split(' ').join(''),
+		startTime: startTime,
+		endTime: endTime,
+		sortOrder : bookmarksDB.find({clip : clipId}).count() +1,
+		text: '',
+		isBeingEdited: false
+	});
+	this.dbId = bookmarksDB.find({name : name}, {clip : clipId}, {owner : Meteor.userId()}).fetch()[0]._id;
 	return this;
 }
 
-Bookmark.prototype.init_name_times = function(name, startTime, endTime){
-	this.name = name;
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.startTime = startTime;
-	this.endTime = endTime;
-	this.isBeingEdited = false;
-	return this;
-}
-
-Bookmark.prototype.init_name_clip = function(name, clip){
-	this.name = name;
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.clip = clip;
-	//This can possibly be the id that will be given to the corresponding html tag: P<playlist name>C<clip name>B<bookmark name>
-	this.id = this.clip.id + '-' + name.split('-').join('').split(' ').join('');
-	this.isBeingEdited = false;
-	return this;
-}
-
-Bookmark.prototype.init_name_clip_playlist = function(name, clip, playlist){
-	this.name = name;
-	this.nospace = name.split('-').join('').split(' ').join('');
-	this.clip = clip;
-	this.playlist = playlist;
-	this.id = this.playlist.id() + '-' + this.clip.id + '-' + name.split('-').join('').split(' ').join('');
-	this.isBeingEdited = false;
+Bookmark.prototype.init_existing_id = function(id){
+	this.dbId = id;
 	return this;
 }

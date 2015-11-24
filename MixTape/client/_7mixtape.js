@@ -41,17 +41,19 @@ $(document).ready(function() {
 
 
 MixTape.setCurrentBookmark = function(bookmarkIndex){
+	console.log(bookmarkIndex);
 	if (bookmarkIndex >=  0){
 		console.log("Setting current bookmark Have");
-		currentBookmark = currentClip.bookmarks[bookmarkIndex];
-		console.log(currentBookmark.name);
-		if(currentClip.playlist == selectedPlaylist){
-			if(currentClip.src == currentSrc){
-				 if(selected_bookmark_identifier == null || selected_bookmark_identifier != currentBookmark.name){
-					selected_bookmark_identifier = currentClip.name + "-" + currentBookmark.name;
+		currentBookmark = currentClip.bookmarks()[bookmarkIndex];
+		console.log(currentClip.playlist());
+		console.log(selectedPlaylist);
+		if(currentClip.playlist() == selectedPlaylist){
+			if(currentClip.source() == currentSrc){
+				 if(selected_bookmark_identifier == null || selected_bookmark_identifier != currentBookmark.name()){
+					selected_bookmark_identifier = currentClip.name() + "-" + currentBookmark.name();
 					console.log(selected_bookmark_identifier);
 					is_bookmark_selected = true;
-					selectedPlaylist = currentClip.playlist;
+					selectedPlaylist = currentClip.playlist();
 					MixTape.adjustBookmarkMarkers();
 				}
 			}
@@ -66,16 +68,16 @@ MixTape.setCurrentBookmark = function(bookmarkIndex){
 			console.log("Waiting on metadata");
 		}
 		*/
-		if(currentClip.playlist == selectedPlaylist){
-			if(currentClip.src == currentSrc){
+		if(currentClip.playlist() == selectedPlaylist){
+			if(currentClip.source() == currentSrc){
 				console.log('Changing bookmark stuff. False');
 				if(currentBookmark == null && selected_bookmark_identifier != null && !is_deselecting){
 					var isNewClip = true;
-					for(var i = 0; i < currentClip.bookmarks.length; i++){
-						currentBookmark = currentClip.bookmarks[i];
-						if(selected_bookmark_identifier == currentBookmark.name){
-							$('#' + currentBookmark.id).addClass('active');
-							$('#' + currentBookmark.id).click(MixTape.deselect);
+					for(var i = 0; i < currentClip.bookmarks().length; i++){
+						currentBookmark = currentClip.bookmarks()[i];
+						if(selected_bookmark_identifier == currentBookmark.name()){
+							$('#' + currentBookmark.id()).addClass('active');
+							$('#' + currentBookmark.id()).click(MixTape.deselect);
 							isNewClip = false;
 							break;
 						}
@@ -343,7 +345,7 @@ MixTape.addItemToMenu = function(menu, item){
 			item.setId(tag);
 		}
 		
-		console.log(item.id());
+		// console.log(item.id());
 		// console.log(tag);
 
 	itemContainer.setAttribute('id', tag);
@@ -445,8 +447,8 @@ MixTape.makeActive = function(item){
 		}
 		else if(item.classList.contains('bookmark')){
 			// the things on the bookmark menu
-			for(var i = 0; i < playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks().length; i++){
-				if (item.id == playlists[currentPlaylistIndex].clips[currentClipIndex].bookmarks()[i].id()){
+			for(var i = 0; i < playlists[currentPlaylistIndex].clips()[currentClipIndex].bookmarks().length; i++){
+				if (item.id == playlists[currentPlaylistIndex].clips()[currentClipIndex].bookmarks()[i].id()){
 					// set the matching index
 					MixTape.setCurrentBookmark(i);
 				}
@@ -550,8 +552,9 @@ MixTape.updateMenus = function(){
 		if (currentClip != null){
 			if (currentClip.bookmarks() != null){
 			//add all the active bookmarks
+			console.log(currentClip.bookmarks());
 			for(var b = 0; b < currentClip.bookmarks().length; b++){
-				MixTape.addItemToMenu(bookmarkMenu, currentClip.bookmarks[b]);
+				MixTape.addItemToMenu(bookmarkMenu, currentClip.bookmarks()[b]);
 			}
 		}
 		}

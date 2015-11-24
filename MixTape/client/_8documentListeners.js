@@ -45,7 +45,7 @@ $(document).ready(function() {
         if(event.keyCode == 13){
             console.log('enter');
             event.preventDefault();
-            savePlaylists();
+            MixTape.savePlaylists();
         }
     })
     
