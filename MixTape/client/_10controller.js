@@ -8,7 +8,7 @@ Controller = {
 		console.log("Hello, from controller;");
 		console.log(refreshedPlaylists.count());
 		refreshedPlaylists.forEach(function(e){
-			playlists.push(e.name)
+			playlists.push(new Playlist().init_existing_id(e._id));
 		});
 	}
 }

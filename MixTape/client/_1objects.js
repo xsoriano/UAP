@@ -107,8 +107,11 @@ Playlist.prototype.init_new = function(name){
 		isBeingEdited: false
 	});
 	this.dbId = playlistsDB.find({name : name}, {owner : Meteor.userId()}).fetch()[0]._id;
+	return this;
+}
 
-
+Playlist.prototype.init_existing_id = function(id){
+	this.dbId = id;
 	return this;
 }
 
@@ -323,6 +326,11 @@ Bookmark.prototype = {
 
 		})
 		return bookmarkObjects;
+	},
+	belongsToClip: function(clip){
+		var myClipId = bookmarksDB.find({_id : this.dbId}).fetch()[0].clip;
+		var otherClipId = clip.dbId
+		return (myClipId == otherClipId)
 	},
 
 

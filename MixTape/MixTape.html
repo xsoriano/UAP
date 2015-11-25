@@ -2,33 +2,15 @@
   <title>MixTape</title>
 </head>
 
-<body background="background.png">
+<body>
   {{> topNav}}
 
   {{> player}}
 
-<!--    <div class='container' id='top-row' style="background: #B8B8B8; position:fixed; margin-top:-80px; height:70px; min-height:70px;">
-     <div class='col-md-12'>
-      <div class="track_background" id="track_background_id">
-            <div class="track" id="track_id"></div>
-            <div class="time_passed"></div>
-            <audio src="" type="audio/mpeg" id="current-clip"></audio>
-            <button id="btnPlay" type="button" class="btn btn-info btn-lg"><span class="editor-button glyphicon glyphicon-play" id="btnPlay_icon"></span></button>
-            <div class="time_length"></div>
-            <div class="progress_bar" id="progress_bar_id"></div>
-            <div class="progress_thumb" id="progress_thumb_id"></div>
-            <div class="bookmark_marker" id="bookmark_marker_start"><span class="glyphicon glyphicon-triangle-top"></span></div>
-            <div id="bookmark_time_start"></div>
-            <div id="bookmark_time_end"></div>
-            <div class="bookmark_marker" id="bookmark_marker_end"><span class="glyphicon glyphicon-triangle-top"></span></div>
-            <div id="hover_time_id"></div>
-          </div>
-
-    </div>  
-  </div> -->
-
   <div id='music-container' class='container'>
-    <div class='col-md-2 left'>
+    {{> playlistsMenu}}
+<!--     <div class='col-md-2 left'>
+      
       <div id='playlists' class="music-section">
         <ul class="nav nav-pills nav-stacked">
           <li class="music-section-header" onClick="MixTape.newPlaylist();"><a href="#">
@@ -39,7 +21,7 @@
           </ul>
         </ul>
       </div>
-    </div>
+    </div> -->
 
     <div class='col-md-7'>
       <div id="clips" class="music-section">

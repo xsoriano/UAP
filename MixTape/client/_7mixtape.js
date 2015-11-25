@@ -41,17 +41,13 @@ $(document).ready(function() {
 
 
 MixTape.setCurrentBookmark = function(bookmarkIndex){
-	console.log(bookmarkIndex);
 	if (bookmarkIndex >=  0){
 		console.log("Setting current bookmark Have");
 		currentBookmark = currentClip.bookmarks()[bookmarkIndex];
-		console.log(currentClip.playlist());
-		console.log(selectedPlaylist);
 		if(currentClip.playlist() == selectedPlaylist){
 			if(currentClip.source() == currentSrc){
-				 if(selected_bookmark_identifier == null || selected_bookmark_identifier != currentBookmark.name()){
-					selected_bookmark_identifier = currentClip.name() + "-" + currentBookmark.name();
-					console.log(selected_bookmark_identifier);
+				 if(selected_bookmark_identifier == null || selected_bookmark_identifier != currentBookmark.dbId){
+					selected_bookmark_identifier = currentBookmark.dbId;
 					is_bookmark_selected = true;
 					selectedPlaylist = currentClip.playlist();
 					MixTape.adjustBookmarkMarkers();
@@ -63,38 +59,33 @@ MixTape.setCurrentBookmark = function(bookmarkIndex){
 		currentBookmark = null;
 		//Gabrielj. Changing the source of an audio element takes some time, need this be blocked until that is finished.
 		console.log("Setting current bookmark Null");
-		/*
-		while(isLoadingMetadata){
-			console.log("Waiting on metadata");
-		}
-		*/
 		if(currentClip.playlist() == selectedPlaylist){
 			if(currentClip.source() == currentSrc){
 				console.log('Changing bookmark stuff. False');
-				if(currentBookmark == null && selected_bookmark_identifier != null && !is_deselecting){
-					var isNewClip = true;
-					for(var i = 0; i < currentClip.bookmarks().length; i++){
-						currentBookmark = currentClip.bookmarks()[i];
-						if(selected_bookmark_identifier == currentBookmark.name()){
-							$('#' + currentBookmark.id()).addClass('active');
-							$('#' + currentBookmark.id()).click(MixTape.deselect);
-							isNewClip = false;
-							break;
-						}
-					}
-					//Must be a new clip, and no bookmark is selected
-					if(isNewClip){
-						selected_bookmark_identifier = null;
-						is_bookmark_selected = false;
-						is_deselecting = false;
-						MixTape.adjustBookmarkMarkers();
-					}
-				} else {
+				// if(selected_bookmark_identifier != null && !is_deselecting){
+				// 	var isNewClip = true;
+				// 	for(var i = 0; i < currentClip.bookmarks().length; i++){
+				// 		var bookmark = currentClip.bookmarks()[i];
+				// 		if(selected_bookmark_identifier == bookmark.dbId){
+				// 			$('#' + bookmark.id()).addClass('active');
+				// 			$('#' + bookmark.id()).click(MixTape.deselect);
+				// 			isNewClip = false;
+				// 			break;
+				// 		}
+				// 	}
+				// 	//Must be a new clip, and no bookmark is selected
+				// 	if(isNewClip){
+				// 		selected_bookmark_identifier = null;
+				// 		is_bookmark_selected = false;
+				// 		is_deselecting = false;
+				// 		MixTape.adjustBookmarkMarkers();
+				// 	}
+				// } else {
 					selected_bookmark_identifier = null;
 					is_bookmark_selected = false;
 					is_deselecting = false;
 					MixTape.adjustBookmarkMarkers();
-				}
+				// }
 				
 			}
 		}
@@ -104,21 +95,15 @@ MixTape.setCurrentBookmark = function(bookmarkIndex){
 }
 
 MixTape.setCurrentClip  = function(clipIndex){
-	console.log('In setcurrentclip');
-
 	currentClipIndex = clipIndex;
 	var prevClip = currentClip;
 	if (clipIndex >= 0){
 		currentClip = currentPlaylist.clips()[clipIndex];
 		console.log('Have set currentClip to something');
 		console.log(currentClip);
-		// also set the source to the correct file
-		if (currentClip.bookmarks().length > 0){
+		if (currentSrc != currentClip.source()){
 			MixTape.setCurrentBookmark(-1);
-		}
-		else{
-			MixTape.setCurrentBookmark(-1);
-		}
+		}	
 	}
 	else{
 		console.log('Have set currentClip to null');
@@ -138,9 +123,9 @@ MixTape.setCurrentClip  = function(clipIndex){
 
 // this might change for usability, like take a playlistname instead?
 MixTape.setCurrentPlaylist = function(playlistIndex){
+	console.log("Setting current playList");
 	if (playlistIndex >= 0){
 		currentPlaylist = playlists[playlistIndex];
-		console.log(currentPlaylist);
 		if (currentPlaylist.clips().length > 0){
 			MixTape.setCurrentClip(0);
 		}else{
@@ -195,7 +180,7 @@ MixTape.isNametUsed = function(itemBackend, nameString){
 			}
 		}
 		else{
-			console.log('warning');
+			console.log('Warning: The type of an item is incorrectly defined');
 		}
 	return isName;
 }
@@ -229,7 +214,7 @@ MixTape.setCurrentItemToNull = function(item){
 			setCurrentBookmark(-1);
 		}
 		else{
-			console.log('warning');
+			console.log('Warning: A menu item does not contain the correct type.');
 		}
 	}
 }
@@ -281,7 +266,6 @@ MixTape.addItemToMenu = function(menu, item){
 		var removalName = MixTape.getBackEndItem(selection[0]).name;
 		
 		var confirmationMessage;
-		console.log(selection[0]);
 
 		bootbox.confirm("Are you sure you want to remove " +  removalType + " " + removalName + "?", function(result) {
   			if (result){
@@ -293,21 +277,27 @@ MixTape.addItemToMenu = function(menu, item){
 
 	});
 
+
 	$(itemPlayIconBefore).click(function(e) {
 		// var name = ($(this).text()).trim();
 		console.log('In play');
-		var playClip = $(this).parent().parent();
-		console.log(playClip);
+		var playClip = ($(this).parent().parent());
 		MixTape.deactivate(playClip[0]);
 		MixTape.makeActive(playClip[0]);
-		MixTape.updateMenus();	
-		// console.log(playClip);
+		if(!playClip.hasClass('bookmark')) {
+			MixTape.setCurrentBookmark(-1);
+			MixTape.updateMenus();
+		}
+		else{
+			e.stopPropagation();
+		}
 		MixTape.setCurrentClipPlayer();
 		if (waitForMetadata){
 			checkMetadata = setInterval(function () {MixTape.playWhenMetadataLoaded(e)}, 250);
 		}else{
 			MixTape.togglePlay(e);
 		}
+		
 		
 	});
 
@@ -352,16 +342,18 @@ MixTape.addItemToMenu = function(menu, item){
 	
 	var clicks = 0, timeOut = 200;
 	$(itemContainer).bind('click', function(e) {
+		console.log("Click!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		clicks++;
-		MixTape.deactivate(this);
-		MixTape.makeActive(this);
-		setTimeout(function() {
-	      if (clicks == 1){
-	      	MixTape.updateMenus();
-	      }      
-	    }, timeOut);
-		console.log('clicked on item');
-		console.log(this);
+		if(!$(this).hasClass('active')){
+			MixTape.deactivate(this);
+			MixTape.makeActive(this);
+			setTimeout(function() {
+		      if (clicks == 1){
+		      	MixTape.updateMenus();
+		      }      
+			}, timeOut);
+		}	
+
 	});
 
 	$(itemContainer).bind('dblclick', function(e) {
@@ -388,7 +380,7 @@ MixTape.addItemToMenu = function(menu, item){
 	if (currentItem){
 		if (item.dbId == currentItem.dbId){
 			$('#' + itemContainer.id).addClass('active');
-			if (item.type = 'bookmark') $('#' + itemContainer.id).click(MixTape.deselect);
+			if (item.type == 'bookmark') $('#' + itemContainer.id).click(MixTape.deselect);
 		}
 	}
 
@@ -431,7 +423,7 @@ MixTape.makeActive = function(item){
 		if(item.classList.contains('playlist')){
 			// the things on the playlist menu
 			for(var i = 0; i < playlists.length; i++){
-				if (item.id == playlists[i].id){
+				if (item.id == playlists[i].id()){
 					MixTape.setCurrentPlaylist(i);
 				}
 			}

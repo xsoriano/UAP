@@ -40,6 +40,7 @@ $(document).ready(function() {
 
     var clip = document.getElementById('current-clip');
     clip.loop = false;
+    
     clip.addEventListener('loadedmetadata', function() {
     	console.log('loaded meta data!');
 
@@ -86,9 +87,24 @@ $(document).ready(function() {
     	$(input_start_time).val("");
 
     	playingClip = currentClip;
-
     	//Gabrielj. Testing something.
     	// MixTape.setCurrentBookmark(-1);
+    	if (currentBookmark != null){
+    		console.log(currentBookmark);
+    		console.log(currentClip);
+    		console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    		console.log(currentBookmark.belongsToClip(currentClip));
+
+    		if(!currentBookmark.belongsToClip(currentClip)){
+    			MixTape.setCurrentBookmark(-1);
+    		}else{
+    			MixTape.setCurrentBookmark(currentBookmarkIndex);
+    		}
+    	} else{
+    		console.log("11$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    		MixTape.adjustBookmarkMarkers();
+    		MixTape.resetProgressElements();
+    	}	
 
     	//isLoadingMetadata = false;
 
@@ -363,7 +379,7 @@ MixTape.updateTimePassed= function(){
 	}
 }
 
-MixTape.resetProgressElements= function(){
+MixTape.resetProgressElements = function(){
 	if(is_bookmark_selected){
 		var left_position = $('#bookmark_marker_start').position().left;
 		document.getElementById('progress_thumb_id').style.left = left_position+'px';
@@ -417,7 +433,7 @@ MixTape.trackTimer= function() {
 	if(is_bookmark_selected){
 		if(clip_time_played_ms >= bookmark_time_end){
 			MixTape.togglePlay();
-			MixTape.clearInterval(interval_function);
+			clearInterval(interval_function);
 			MixTape.resetProgressElements();
 			//console.log('clip time played',clip_time_played_ms, 'trackTimer()')
 		} else{
