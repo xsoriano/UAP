@@ -36,6 +36,12 @@ if (Meteor.isServer) {
 
       },
 
+      removePlaylist: function() {
+
+        return playlistsDB.remove({sortOrder:{$gt: 3}});
+
+      },
+
       removeAllClips: function() {
 
         return clipsDB.remove({});

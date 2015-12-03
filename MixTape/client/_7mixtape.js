@@ -59,34 +59,36 @@ MixTape.setCurrentBookmark = function(bookmarkIndex){
 		currentBookmark = null;
 		//Gabrielj. Changing the source of an audio element takes some time, need this be blocked until that is finished.
 		console.log("Setting current bookmark Null");
-		if(currentClip.playlist() == selectedPlaylist){
-			if(currentClip.source() == currentSrc){
-				console.log('Changing bookmark stuff. False');
-				// if(selected_bookmark_identifier != null && !is_deselecting){
-				// 	var isNewClip = true;
-				// 	for(var i = 0; i < currentClip.bookmarks().length; i++){
-				// 		var bookmark = currentClip.bookmarks()[i];
-				// 		if(selected_bookmark_identifier == bookmark.dbId){
-				// 			$('#' + bookmark.id()).addClass('active');
-				// 			$('#' + bookmark.id()).click(MixTape.deselect);
-				// 			isNewClip = false;
-				// 			break;
-				// 		}
-				// 	}
-				// 	//Must be a new clip, and no bookmark is selected
-				// 	if(isNewClip){
-				// 		selected_bookmark_identifier = null;
-				// 		is_bookmark_selected = false;
-				// 		is_deselecting = false;
-				// 		MixTape.adjustBookmarkMarkers();
-				// 	}
-				// } else {
-					selected_bookmark_identifier = null;
-					is_bookmark_selected = false;
-					is_deselecting = false;
-					MixTape.adjustBookmarkMarkers();
-				// }
-				
+		if(currentClip){
+			if(currentClip.playlist() == selectedPlaylist){
+				if(currentClip.source() == currentSrc){
+					console.log('Changing bookmark stuff. False');
+					// if(selected_bookmark_identifier != null && !is_deselecting){
+					// 	var isNewClip = true;
+					// 	for(var i = 0; i < currentClip.bookmarks().length; i++){
+					// 		var bookmark = currentClip.bookmarks()[i];
+					// 		if(selected_bookmark_identifier == bookmark.dbId){
+					// 			$('#' + bookmark.id()).addClass('active');
+					// 			$('#' + bookmark.id()).click(MixTape.deselect);
+					// 			isNewClip = false;
+					// 			break;
+					// 		}
+					// 	}
+					// 	//Must be a new clip, and no bookmark is selected
+					// 	if(isNewClip){
+					// 		selected_bookmark_identifier = null;
+					// 		is_bookmark_selected = false;
+					// 		is_deselecting = false;
+					// 		MixTape.adjustBookmarkMarkers();
+					// 	}
+					// } else {
+						selected_bookmark_identifier = null;
+						is_bookmark_selected = false;
+						is_deselecting = false;
+						MixTape.adjustBookmarkMarkers();
+					// }
+					
+				}
 			}
 		}
 	}
@@ -101,9 +103,12 @@ MixTape.setCurrentClip  = function(clipIndex){
 		currentClip = currentPlaylist.clips()[clipIndex];
 		console.log('Have set currentClip to something');
 		console.log(currentClip);
-		if (currentSrc != currentClip.source()){
-			MixTape.setCurrentBookmark(-1);
-		}	
+		if(currentClip){
+			if (currentSrc != currentClip.source()){
+				MixTape.setCurrentBookmark(-1);
+			}	
+		}
+		
 	}
 	else{
 		console.log('Have set currentClip to null');

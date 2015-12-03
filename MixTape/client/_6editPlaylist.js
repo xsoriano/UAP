@@ -6,18 +6,18 @@ MixTape.editPlaylist = function(){
 		$('#editPlaylistWindow').modal('show');
 		MixTape.fillDummyEditDialog();
 		// put in the current playlist name		
-		document.getElementById('edit-playlist-name').value = currentPlaylist.name;
+		document.getElementById('edit-playlist-name').value = currentPlaylist.name();
 		// add the clips from the current playlist
-		if(currentPlaylist.clips){
-			for(var i = 0; i < currentPlaylist.clips.length; i++){
+		if(currentPlaylist.clips()){
+			for(var i = 0; i < currentPlaylist.clips().length; i++){
 				// select the matching clips
-				if(MixTape.sourceClipsContainsName(currentPlaylist.clips[i].name)){
-					MixTape.selectEditMusic(currentPlaylist.clips[i].name);
+				if(MixTape.sourceClipsContainsName(currentPlaylist.clips()[i].name())){
+					MixTape.selectEditMusic(currentPlaylist.clips()[i].name());
 				}
 				else{
 					// doesn't have a corresponding clip add to the menu
 					var otherMenu = document.getElementById('ep-added-container');
-					MixTape.addItemToDialog(otherMenu, currentPlaylist.clips[i].name, '', 'remove(this)');
+					MixTape.addItemToDialog(otherMenu, currentPlaylist.clips()[i].name(), '', 'remove(this)');
 				}
 			}
 		}

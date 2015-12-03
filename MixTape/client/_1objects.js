@@ -254,10 +254,10 @@ Clip.prototype = {
 
 
 Clip.prototype.init_new = function(name, playlist, src){
-	
 	//var playlistId = playlistsDB.find({name : playlist.name()}).fetch()[0]._id;
 	// It seems that we can get away with just finding the dbId of the passed playlist.
 	var playlistId = playlist.dbId;
+	// console.log("before being inserted");
 	clipsDB.insert({
 		owner : Meteor.userId(),
 		playlist : playlistId,
@@ -276,6 +276,28 @@ Clip.prototype.init_existing_id = function(id){
 	this.dbId = id;
 	return this;
 }
+
+//A to be added clip
+preClip = function(){
+
+}
+
+preClip.prototype = {
+	// declare all the functions that clip should support to inherit
+	add: function(playlist){
+		// console.log("Adding to add clip");
+		var clip = new Clip().init_new(this.name, playlist, this.url);
+		return clip;
+	}
+};
+
+preClip.prototype.init_new = function(name, url){
+	this.name = name;
+	this.url = url;
+	return this;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////Bookmark Object///////////////////////////////////////////////////////////

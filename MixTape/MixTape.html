@@ -106,9 +106,18 @@
                                               </div>                
                                             </div>
                                             <div role="tabpanel" class="tab-pane" id="np-urlTab">
-                                                <div class="panel panel-default panel-body" id="url-container">                            
-                                                    <label class=" control-label" for="url">Paste a music URL here:</label> 
-                                                    <input name="url" type="text" id="np-url" onclick="this.select()"> 
+                                                <div class="panel panel-default panel-body" id="url-container">   
+                                                  <form>
+                                                    <div class="form-group">
+                                                      <label for="name">Name:</label>
+                                                      <input type="text" class="form-control" id="src-name" onClick='this.select()'>
+                                                    </div>
+                                                    <div class="form-group">
+                                                      <label for="url">URL:</label>
+                                                      <input name="url" type="text" class="form-control"  id='src-url' onClick='this.select()'>
+                                                    </div>
+                                                  </form>
+                                                  <button class="btn btn-default" onclick="MixTape.addURLClip()">Add</button>
                                                 </div>                            
 
                                             </div>
@@ -141,7 +150,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal" onClick='MixTape.clearPlaylistModal();'>Cancel</button>
-          <button type="button" class="btn btn-primary" id="np-saveButton" onClick='MixTape.savePlaylists();'>Save</button>
+          <button type="button" class="btn btn-primary" id="np-saveButton" onClick='MixTape.savePlaylist();'>Save</button>
         </div>
       </div>
     </div>
@@ -182,9 +191,18 @@
                       <ul></ul>                    
                     </div>
                     <div role="tabpanel" class="tab-pane" id="ep-urlTab">
-                      <div class="panel panel-default panel-body" id='ep-url-container'>                            
-                        <label class=" control-label" for="url">Paste a music URL here:</label> 
-                        <input name="url" type="text" id='ep-url' onClick='this.select()'>
+                      <div class="panel panel-default panel-body" id='ep-url-container'>     
+                        <form role="form">
+                          <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" class="form-control" id="src-name" onClick='this.select()'>
+                          </div>
+                          <div class="form-group">
+                            <label for="url">URL:</label>
+                            <input name="url" type="text" class="form-control"  id='src-url' onClick='this.select()'>
+                          </div>
+                          <button class="btn btn-default" onclick="MixTape.addURLClip()">Add</button>
+                        </form>
                       </div>                            
 
                     </div>
