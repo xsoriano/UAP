@@ -4,7 +4,7 @@ clipMenu = null;
 bookmarkMenu = null;
 
 currentPlaylist = null; // these are the current item/object
-currentClip = null;
+// currentClip = null;
 currentBookmark = null;
 
 currentPlaylistIndex = null;
@@ -32,7 +32,7 @@ $(document).ready(function() {
 	playlistMenu = document.getElementById('playlists');
 	clipMenu = document.getElementById('clips');
 	bookmarkMenu = document.getElementById('bookmarks');
-	MixTape.updateMenus();
+	//MixTape.updateMenus();
 
 	// get any params
 	if ($.getUrlVar('')) {

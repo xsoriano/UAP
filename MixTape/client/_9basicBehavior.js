@@ -34,8 +34,8 @@ $(document).ready(function() {
   		basicBehavior.centerBtnPlay();
 		basicBehavior.centerTrackName();
 	});
-	var playlistsSubscription = Meteor.subscribe('playlistsDB');
-	collectionLoadChecker = setInterval(function(){basicBehavior.loadPlaylists(playlistsSubscription);}, 1000);
+	// var playlistsSubscription = Meteor.subscribe('playlistsDB');
+	// collectionLoadChecker = setInterval(function(){basicBehavior.loadPlaylists(playlistsSubscription);}, 1000);
 
 	
 });
@@ -70,7 +70,9 @@ basicBehavior.loadPlaylists = function(playlistsSubscription){
 			MixTape.setCurrentPlaylist(0);
 		}
 	}	
+
+}
+
 basicBehavior.helloWorld = function(){
 	console.log("hello world!");
-}
 }

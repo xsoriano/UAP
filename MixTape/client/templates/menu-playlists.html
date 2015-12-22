@@ -1,0 +1,21 @@
+<template name="menuPlaylists">
+  <div class='col-md-2 left'>
+
+    <div id='playlists' class="music-section">
+      <ul class="nav nav-pills nav-stacked">
+        <li class="music-section-header" onClick="MixTape.newPlaylist();"><a href="#">
+          <span class="glyphicon glyphicon-plus"></span>Playlists</a>
+        </li>
+        <div id='playlistItems'>
+        {{#each playlist}}
+
+          <li class="list-group-item playlist {{activeClass}}" id={{_id}}>
+            <div><span class="glyphicon glyphicon-play music-item-play-icon" style="visibility: hidden;"></span>{{name}}</div>
+          </li>
+          {{/each}}
+        </div>
+      </ul>
+    </div>
+  </div>
+
+</template>

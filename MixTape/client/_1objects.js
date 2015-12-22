@@ -102,7 +102,7 @@ Playlist.prototype.init_new = function(name){
 		owner: ownerId,
 		name : name,
 		id: name.split('-').join('').split(' ').join(''),
-		sortOrder : playlistsDB.find({owner : ownerId}).count() +1,
+		rank : playlistsDB.find({owner : ownerId}).count() +1,
 		text: '',
 		isBeingEdited: false
 	});
@@ -264,7 +264,7 @@ Clip.prototype.init_new = function(name, playlist, src){
 		name : name,
 		id: name.split('-').join('').split(' ').join(''),
 		source : src,
-		sortOrder : clipsDB.find({playlist : playlistId}).count() +1,
+		rank : clipsDB.find({playlist : playlistId}).count() +1,
 		text: '',
 		isBeingEdited: false
 	});
@@ -400,7 +400,7 @@ Bookmark.prototype.init_new = function(name, clip, startTime, endTime){
 		id: name.split('-').join('').split(' ').join(''),
 		startTime: startTime,
 		endTime: endTime,
-		sortOrder : bookmarksDB.find({clip : clipId}).count() +1,
+		rank : bookmarksDB.find({clip : clipId}).count() +1,
 		text: '',
 		isBeingEdited: false
 	});

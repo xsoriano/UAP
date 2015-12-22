@@ -516,7 +516,7 @@ MixTape.clickTrack= function(e){
 //Gabriel Modification. END
 
 
-MixTape.setCurrentClipPlayer= function(){
+MixTape.setCurrentClipPlayer = function(){
 
 //<<<<<<< HEAD
 console.log('Setting current clip player');
@@ -525,6 +525,8 @@ console.log('Setting current clip player');
 //=======
 	// use this to keep from appearing as though playing a clip 
 	// when there are no clips
+	var currentClip = Session.get(CURRENT_CLIP_KEY);
+	var sourceToPlay = clipsDB.find({_id:currentClip}).fetch()[0].source;
 	if (noClips == true){
 		noClips = false;
 	}
@@ -536,14 +538,14 @@ console.log('Setting current clip player');
 		noClips = true;
 		//Change made by Xavier
 		currentSrc = null;
-		selectedPlaylist = null;
+		//selectedPlaylist = null;
 		//End of change by Xavier
 	} else {
-		document.getElementById('current-clip').src = currentClip.source();
+		document.getElementById('current-clip').src = sourceToPlay;
 		//Change made by Xavier
 		waitForMetadata = true;
-		currentSrc = currentClip.source();
-		selectedPlaylist = currentClip.playlist();
+		currentSrc = sourceToPlay;
+		//selectedPlaylist = currentClip.playlist();
 
 		//End of change by Xavier
 	}
