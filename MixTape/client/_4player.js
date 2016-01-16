@@ -41,6 +41,7 @@ $(document).ready(function() {
     helper: function() {
         clearInterval(interval_function);
         return $(this);
+
     }, 
 
     containment: "#track_id",
@@ -391,55 +392,55 @@ console.log("End dragging");
 }
 
 //This is for when dragging after having pressed down on the track thumb.
-MixTape.dragProgressElements = function(e){
-	var currentClip = Session.get('CURRENT_CLIP_KEY');
-	if (currentClip){
-		if(dragging_thumb){
-			MixTape.hoverTrack(e);
-			console.log("I'm dragging");
-			var new_pos = ''+(e.clientX-$('#track_id').offset().left);
-			//console.log('new_pos: ' + new_pos);
-			//console.log('offsetWidth: ' + document.getElementById('track_background_id').offsetWidth);
-			var max_width = document.getElementById('track_background_id').offsetWidth;
-			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
-			if(currentBookmarkKey){
-				var left_position = $('#bookmark_marker_start').position().left;
-				var right_position = $('#bookmark_marker_end').position().left;
+// MixTape.dragProgressElements = function(e){
+// 	var currentClip = Session.get('CURRENT_CLIP_KEY');
+// 	if (currentClip){
+// 		if(dragging_thumb){
+// 			MixTape.hoverTrack(e);
+// 			console.log("I'm dragging");
+// 			var new_pos = ''+(e.clientX-$('#track_id').offset().left);
+// 			//console.log('new_pos: ' + new_pos);
+// 			//console.log('offsetWidth: ' + document.getElementById('track_background_id').offsetWidth);
+// 			var max_width = document.getElementById('track_background_id').offsetWidth;
+// 			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
+// 			if(currentBookmarkKey){
+// 				var left_position = $('#bookmark_marker_start').position().left;
+// 				var right_position = $('#bookmark_marker_end').position().left;
 
-				if(new_pos < left_position){
-					document.getElementById('progress_thumb_id').style.left = left_position- $('#progress_thumb_id').width()/2 +'px';
-					document.getElementById('progress_bar_id').style.width = left_position +'px';
-				} else if(new_pos > right_position){
-					document.getElementById('progress_thumb_id').style.left = right_position- $('#progress_thumb_id').width()/2 +'px';
-					document.getElementById('progress_bar_id').style.width = right_position +'px';
-				} else {
-					document.getElementById('progress_thumb_id').style.left = new_pos- $('#progress_thumb_id').width()/2+'px';
-					document.getElementById('progress_bar_id').style.width = new_pos+'px';
-				}
+// 				if(new_pos < left_position){
+// 					document.getElementById('progress_thumb_id').style.left = left_position- $('#progress_thumb_id').width()/2 +'px';
+// 					document.getElementById('progress_bar_id').style.width = left_position +'px';
+// 				} else if(new_pos > right_position){
+// 					document.getElementById('progress_thumb_id').style.left = right_position- $('#progress_thumb_id').width()/2 +'px';
+// 					document.getElementById('progress_bar_id').style.width = right_position +'px';
+// 				} else {
+// 					document.getElementById('progress_thumb_id').style.left = new_pos- $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_bar_id').style.width = new_pos+'px';
+// 				}
 
-			} else{
-				if(new_pos < 0){
-					document.getElementById('progress_thumb_id').style.left = - $('#progress_thumb_id').width()/2+'px';
-					document.getElementById('progress_bar_id').style.width = - $('#progress_thumb_id').width()/2+'px';
-				} else if(new_pos > document.getElementById('track_background_id').offsetWidth){
-					document.getElementById('progress_thumb_id').style.left = document.getElementById('track_background_id').offsetWidth- $('#progress_thumb_id').width()/2+'px';
-					document.getElementById('progress_bar_id').style.width = document.getElementById('track_background_id').offsetWidth+'px';
-				} else {
-					document.getElementById('progress_thumb_id').style.left = new_pos- $('#progress_thumb_id').width()/2+'px';
-					document.getElementById('progress_bar_id').style.width = new_pos+'px';
-				}
-			}
-			var current_width = document.getElementById('progress_bar_id').offsetWidth;
-			var progress_percent = current_width/max_width;
-			var clip_time_length_ms = Session.get('clip_duration');
-			clip_time_played_ms = (clip_time_length_ms*progress_percent);
-			clip_time_played_ms = Math.floor(clip_time_played_ms/1000)*1000;
+// 			} else{
+// 				if(new_pos < 0){
+// 					document.getElementById('progress_thumb_id').style.left = - $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_bar_id').style.width = - $('#progress_thumb_id').width()/2+'px';
+// 				} else if(new_pos > document.getElementById('track_background_id').offsetWidth){
+// 					document.getElementById('progress_thumb_id').style.left = document.getElementById('track_background_id').offsetWidth- $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_bar_id').style.width = document.getElementById('track_background_id').offsetWidth+'px';
+// 				} else {
+// 					document.getElementById('progress_thumb_id').style.left = new_pos- $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_bar_id').style.width = new_pos+'px';
+// 				}
+// 			}
+// 			var current_width = document.getElementById('progress_bar_id').offsetWidth;
+// 			var progress_percent = current_width/max_width;
+// 			var clip_time_length_ms = Session.get('clip_duration');
+// 			clip_time_played_ms = (clip_time_length_ms*progress_percent);
+// 			clip_time_played_ms = Math.floor(clip_time_played_ms/1000)*1000;
 
-			console.log(clip_time_played_ms);
-			MixTape.updateTimePassed();
-		}
-	}
-}
+// 			console.log(clip_time_played_ms);
+// 			MixTape.updateTimePassed();
+// 		}
+// 	}
+// }
 
 
 //Clears the help text from invalid bookmark time input
@@ -602,10 +603,11 @@ MixTape.clickTrack= function(e){
 			var right_position = $('#bookmark_marker_end').position().left;
 
 			if(new_pos < left_position){
-				document.getElementById('progress_thumb_id').style.left = left_position - thumbContri +'px';
+				console.log("left position")
+				document.getElementById('progress_thumb_id').style.left = left_position +'px';
 				document.getElementById('progress_bar_id').style.width = left_position +'px';
 			} else if(new_pos > right_position){
-				document.getElementById('progress_thumb_id').style.left = right_position - thumbContri +'px';
+				document.getElementById('progress_thumb_id').style.left = right_position +'px';
 				document.getElementById('progress_bar_id').style.width = right_position +'px';
 			} else {
 				document.getElementById('progress_thumb_id').style.left = new_pos - thumbContri+'px';
@@ -627,7 +629,7 @@ MixTape.clickTrack= function(e){
 			}
 		}
 
-		var current_width = document.getElementById('progress_bar_id').offsetWidth;
+		var current_width = document.getElementById('progress_bar_id').offsetWidth + thumbContri;
 		var max_width = document.getElementById('track_background_id').offsetWidth;
 		var progress_percent = current_width/max_width;
 		var clip_time_length_ms = Session.get('clip_duration');
