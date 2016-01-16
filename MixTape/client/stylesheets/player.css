@@ -2,8 +2,8 @@
 #player-container{
     background: rgba(223, 224, 223, 0.9);
     position: fixed;
-    margin-top: -110px;
-    height: 100px;
+    margin-top: -127px;
+    height: 121px;
     min-height: 100px;
     z-index: 8;
     width:100%;
@@ -49,7 +49,7 @@
     background-color: #E8EAF6;  
     z-index: 4; /*Below progress bar*/
     position: absolute;
-    top: 22px;
+    top: 27px;
 }
 
 .progress_bar{
@@ -58,7 +58,7 @@
     background-color: #3F51B5;
     z-index: 5; /*above track*/
     position: absolute;
-    top: 22px;
+    top: 27px;
 }
 
 .progress_thumb{
@@ -68,7 +68,7 @@
     z-index: 5; /*above track*/
     position: absolute;
     left:0px;
-    top:19px;
+    top:24px;
     border: 2px #3F51B5 solid;
     cursor: pointer;
 }
@@ -76,7 +76,7 @@
 #hover_time_id{
     font-size: 14px;
     position: absolute;
-    top: 17px;
+    top: 7px;
 }
 
         

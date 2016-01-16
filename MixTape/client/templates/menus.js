@@ -1,7 +1,7 @@
-ACTIVE_PLAYLIST_KEY = 'ACTIVE_PLAYLIST_ID';
-ACTIVE_CLIP_KEY = 'ACTIVE_CLIP_ID';
-CURRENT_CLIP_KEY = "CURRENT_CLIP_KEY";
-ACTIVE_BOOKMARK_KEY = "ACTIVE_BOOKMARK_KEY";
+// ACTIVE_PLAYLIST_KEY = 'ACTIVE_PLAYLIST_ID';
+// ACTIVE_CLIP_KEY = 'ACTIVE_CLIP_ID';
+// CURRENT_CLIP_KEY = "CURRENT_CLIP_KEY";
+// ACTIVE_BOOKMARK_KEY = "ACTIVE_BOOKMARK_KEY";
 
 if (Meteor.isClient) {
 
@@ -12,26 +12,26 @@ if (Meteor.isClient) {
 
 		'activeClass': function(){
 
-			return Session.equals(ACTIVE_PLAYLIST_KEY, this._id) && 'active';
+			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'active';
 
 		}
 	});
 
 	Template.menuClips.helpers({
 		'clip': function(){
-			var currentPlaylist = Session.get(ACTIVE_PLAYLIST_KEY);
+			var currentPlaylist = Session.get('ACTIVE_PLAYLIST_KEY');
 			return clipsDB.find({playlist:currentPlaylist},{sort: {rank: 1}});
 		},
 
 		'activeClass': function(){
-			return Session.equals(ACTIVE_CLIP_KEY, this._id) && 'active';
+			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'active';
 		}
 	});
 
 	Template.menuBookmarks.helpers({
 		'bookmark': function(){
-			var currentClip = Session.get(ACTIVE_CLIP_KEY);
-			var currentPlaylist = Session.get(ACTIVE_PLAYLIST_KEY);
+			var currentClip = Session.get('ACTIVE_CLIP_KEY');
+			var currentPlaylist = Session.get('ACTIVE_PLAYLIST_KEY');
 			var currentClipPlaylist = clipsDB.find({_id: currentClip}).fetch()[0];
 			if (currentClipPlaylist) currentClipPlaylist = currentClipPlaylist.playlist;
 
@@ -42,7 +42,7 @@ if (Meteor.isClient) {
 		},
 
 		'activeClass': function(){
-			return Session.equals(ACTIVE_BOOKMARK_KEY, this._id) && 'active';
+			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'active';
 		}
 	});
 
@@ -101,13 +101,14 @@ if (Meteor.isClient) {
 	}
 
 	Template.menuPlaylists.events({
-		'mouseenter .playlist': function(event){
-			$('#' + this._id + ' div span').css( "visibility", "visible");
-		},
+		// I don't think there is a need for a play button here
+		// 'mouseenter .playlist': function(event){
+		// 	$('#' + this._id + ' div span').css( "visibility", "visible");
+		// },
 
-		'mouseleave .playlist': function(event){ 
-			$('#' + this._id + ' div span').css( "visibility", "hidden");
-		},
+		// 'mouseleave .playlist': function(event){ 
+		// 	$('#' + this._id + ' div span').css( "visibility", "hidden");
+		// },
 
 		'click .music-item-play-icon': function(event){
 			console.log("hit the play")
@@ -115,7 +116,15 @@ if (Meteor.isClient) {
 
 		'click .playlist': function(event){
 			console.log("hit the menu")
-			Session.set(ACTIVE_PLAYLIST_KEY, this._id);
+			Session.set('ACTIVE_PLAYLIST_KEY', this._id);
+			var currentClipKey = Session.get('CURRENT_CLIP_KEY');
+			if (currentClipKey){
+				var currentClip = clipsDB.find({_id: currentClipKey}).fetch()[0];
+				if (currentClip.playlist == this._id){
+					Session.set('ACTIVE_CLIP_KEY', currentClipKey);
+				}
+			}
+			
 		}
 
 	});
@@ -130,20 +139,29 @@ if (Meteor.isClient) {
 		},
 
 		'click .music-item-play-icon': function(event){
-			Session.set(CURRENT_CLIP_KEY, this._id);
-			var clipToPlay = Session.get(CURRENT_CLIP_KEY)
-			MixTape.setCurrentClipPlayer(clipToPlay);
+			Session.set('CURRENT_CLIP_KEY', this._id);
+			Session.set('CURRENT_BOOKMARK_KEY', null);
+			Session.set('ACTIVE_BOOKMARK_KEY', null);
+			MixTape.removeCurrentBookmark();
+			var currentClipKey = Session.get('CURRENT_CLIP_KEY');
+			var currentClipName = clipsDB.find({_id: currentClipKey}).fetch()[0].name;
+			//If another clip is waiting to be played, this interval should be stopped.
 			if (waitForMetadata){
-				checkMetadata = setInterval(function () {MixTape.playWhenMetadataLoaded()}, 250);
-			}else{
-				$("#track-name-container").html("<a>"+ this.name + "</a>");
-	    		basicBehavior.centerTrackName();
+				clearInterval(checkMetadata);
 			}
+			MixTape.stopPlaying();
+			MixTape.setCurrentClipPlayer(currentClipKey);
 		},
 
 		'click .clip': function(event){
-			console.log("hit the menu")
-			Session.set(ACTIVE_CLIP_KEY, this._id);
+			Session.set('ACTIVE_CLIP_KEY', this._id);
+			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
+			if (currentBookmarkKey){
+				var currentBookmark = bookmarksDB.find({_id: currentBookmarkKey}).fetch()[0];
+				if (currentBookmark.clip == this._id){
+					Session.set('ACTIVE_BOOKMARK_KEY', currentBookmarkKey);
+				}
+			}
 		}
 
 	});
@@ -158,15 +176,63 @@ if (Meteor.isClient) {
 		},
 
 		'click .music-item-play-icon': function(event){
-			console.log("hit the play")
+			Session.set('CURRENT_BOOKMARK_KEY', this._id);
+			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
+			var currentBookmarkData = bookmarksDB.find({_id: currentBookmarkKey}).fetch()[0];
+			//Now need to check if there is a need of changing the source
+			if (!Session.equals('CURRENT_CLIP_KEY', currentBookmarkData.clip)){
+				console.log('different clip');
+				var newClipKey = currentBookmarkData.clip;
+				Session.set('CURRENT_CLIP_KEY', newClipKey);
+				Session.set('ACTIVE_CLIP_KEY', newClipKey);
+				console.log("The current clip " + currentBookmarkData.clip);
+				if (waitForMetadata){
+					clearInterval(checkMetadata);
+				}
+				MixTape.stopPlaying();
+				MixTape.setCurrentClipPlayer(currentBookmarkData.clip, currentBookmarkKey);
+				
+				event.stopPropagation();
+			}else{
+				if(Session.equals('ACTIVE_BOOKMARK_KEY', this._id)){
+					MixTape.restartBookmark();
+					event.stopPropagation();
+				}else{
+					Session.set('ACTIVE_BOOKMARK_KEY', this._id);
+					var selectedBookmarkKey = Session.get('ACTIVE_BOOKMARK_KEY');
+					MixTape.setCurrentBookmark(selectedBookmarkKey, true);
+					event.stopPropagation();
+				}
+
+			}
+
+			
+			//else the event will propagate and activate the menu item
+			console.log('WILL PROPAGATEEEEEEEEEEEEEE');
+
+			
 		},
 
 		'click .bookmark': function(event){
-			if(Session.equals(ACTIVE_BOOKMARK_KEY, this._id)){
-				Session.set(ACTIVE_BOOKMARK_KEY, null);
+			console.log('PROPAGATEEEEEEEEEEEEEEEEEEEED');
+			if(Session.equals('ACTIVE_BOOKMARK_KEY', this._id)){
+				Session.set('ACTIVE_BOOKMARK_KEY', null);
+				var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
+				if (currentBookmarkKey){
+					var currentBookmarkData = bookmarksDB.find({_id: currentBookmarkKey}).fetch()[0];
+					if (Session.equals('CURRENT_CLIP_KEY', currentBookmarkData.clip)){	
+						MixTape.removeCurrentBookmark();
+						Session.set('CURRENT_BOOKMARK_KEY', null);
+					}
+				}
+				
+				
 			}else{
-				Session.set(ACTIVE_BOOKMARK_KEY, this._id);
+				Session.set('ACTIVE_BOOKMARK_KEY', this._id);
+				var selectedBookmarkKey = Session.get('ACTIVE_BOOKMARK_KEY');
+				MixTape.setCurrentBookmark(selectedBookmarkKey);
 			}
+
 			
 		}
 
