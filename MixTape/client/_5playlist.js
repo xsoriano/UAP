@@ -1,33 +1,142 @@
+var waitForNewCLip = null;
+preClipsDB = new Mongo.Collection(null);
+preClips = []
+
+$.validator.addMethod("noRepeatedNames", function(value, element) {
+	return !(preClipsDB.find({name : value}).count()>0);
+  
+}, "A clip with this name already exists.");
+
 // everything that is dealing with or updating the new playlist dialog is going in here...
-addedClips = [];
-  Template.topNav.events({
-  	'click #topBanner-newPlaylistBtn': function(){
-       MixTape.newPlaylist();
-       //  $('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
-      	// fillDummyDialog();
+
+
+Template.addClipPanel.onRendered(function(){
+    $('#add-clip-panel').validate({
+        rules: {
+            name: {
+                required: true,
+                noRepeatedNames: true
+            },
+            url: {
+                required: true,
+                url: true
+            }
+        }
+    });
+    var clip_url = document.getElementById('clip-url');
+    clip_url.addEventListener('input', function() {
+		console.log('Pressed the key!');
+		if(Session.get('error_new_clip')){
+			Session.set('error_new_clip',false);
+		}
+	});
+});
+
+Template.addClipPanel.helpers({
+	errorInClip: function () {
+		return Session.get('error_new_clip');
+	},
+	
+	'errorClass': function(){
+			return Session.get('error_new_clip') && 'error';
+	}
+});
+
+Template.addClipPanel.events({
+	'submit form': function(event){
+		event.preventDefault();
+		console.log('this is the submit');
+		MixTape.addURLClip();
     }
-  });
+});
+
+Template.newPlaylist.events({
+  'click #show-add': function (e) {
+  	e.preventDefault();
+  	$(e.currentTarget).blur();
+    $(e.currentTarget).toggleClass('active');
+    if ($(e.currentTarget).hasClass('active')){
+    	Session.set('adding_new_clip',true);
+    	Session.set('error_new_clip',false);
+    }else{
+    	Session.set('adding_new_clip',false);
+    }
+  }
+});
 
 
-  Template.topNav.helpers({
+Template.newPlaylist.helpers({
+	waitForNewCLip: function () {
+		return Session.get('wait_for_new_clip');
+	},
 
-    
-  });
+	addingNewClip: function () {
+		return Session.get('adding_new_clip');
+	},
+
+	'preClip': function(){
+		return preClipsDB.find({owner:Meteor.userId()},{sort: {rank: 1}});
+	},
+});
+
+
+$(document).ready(function() {
+	Session.set('wait_for_new_clip',false);
+	Session.set('adding_new_clip',false);
+	var new_clip_audio = document.getElementById('new-clip-audio');
+	var new_clip_source = document.getElementById('new-clip-source');
+
+	
+	new_clip_audio.addEventListener('loadedmetadata', function() {
+		console.log('New clip metadata loaded');
+		Session.set('wait_for_new_clip',false);
+	});
+
+	new_clip_source.addEventListener('error', function() {
+		console.log('error in clip data');
+		Session.set('error_new_clip',true);
+	});
+});
 
 MixTape.addURLClip= function(){
-	var clipName = $('#src-name').val();
-	var clipURL = $('#src-url').val();
-	var clipToAdd = new preClip().init_new(clipName, clipURL);
-	var otherMenu = document.getElementById('np-added-container');
-	MixTape.addItemToDialog(otherMenu, clipName, '-matching', 'MixTape.removeMusic(this)');
-	addedClips.push(clipToAdd);
+	
+	var clipName = $('#clip-name').val();
+	var clipURL = $('#clip-url').val();
+	var clipNotes = $('#clip-notes').val();
+	Session.set('wait_for_new_clip',true);
+	Session.set('error_new_clip',false);
+	$('#new-clip-source').attr('src', clipURL);
+	var new_clip_audio = document.getElementById('new-clip-audio');
+	new_clip_audio.load();
+	if (waitForNewCLip) clearInterval(waitForNewCLip);
+	waitForNewCLip = setInterval(function () {
+		if (!Session.get('wait_for_new_clip')){
+			clearInterval(waitForNewCLip);
+			var duration = new_clip_audio.duration;
+			var clipToAdd = new preClip().init_new(clipName, clipURL, clipNotes, duration);
+			preClips.push(clipToAdd);
+		}
+		else if(Session.get('error_new_clip')){
+			clearInterval(waitForNewCLip);
+			Session.set('wait_for_new_clip',false);
+		}
+	}, 250);
+	// var clipToAdd = new preClip().init_new(clipName, clipURL);
+	// var otherMenu = document.getElementById('np-added-container');
+	// MixTape.addItemToDialog(otherMenu, clipName, '-matching', 'MixTape.removeMusic(this)');
+	// addedClips.push(clipToAdd);
+}
+
+function noRepeatedNames(name){
+	return !(preClipsDB.find({name : name}).count()>0);
 }
 
 
 
 MixTape.newPlaylist= function() {
 	$('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
-	MixTape.fillDummyDialog();
+	Session.set('error_new_clip',false);
+	// MixTape.fillDummyDialog();
 }
 // add to the menu a new item
 // Needs to be modified!!
@@ -178,6 +287,7 @@ MixTape.addDummyURL= function(menu, url){
 
 // on closing without saving
 MixTape.clearPlaylistModal = function(){
-	$('#np-added-container .list-group-item').remove();
-	$('#newPlaylistWindow').find('form')[0].reset();
+	preClipsDB.remove({});
+	$('#show-add').removeClass('active');
+	Session.set('adding_new_clip', false);
 }

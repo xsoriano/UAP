@@ -1,0 +1,80 @@
+<template name="newPlaylist">
+  <!-- NewPlaylist modal -->
+  <div id="newPlaylistWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='MixTape.clearPlaylistModal();'>
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <form>
+            <input placeholder="New Playlist Name" type="text" class="form-control" id="recipient-name" onclick="this.select()">
+          </form>
+        </div>
+
+        <div class="modal-body">
+          <div class="container-fluid">
+<!--             <div class="row"><h5 class="modal-title" id="np-name">Add music to this playlist</h5></div> -->
+              <div class="row">
+                <div class="col-md-6 panel panel-default" id="np-clipSource" role="tabpanel">
+                  <div class="panel-body">
+                      
+                  <button id="show-add" type="button" class="btn btn-default" style="margin-bottom:10px;">Add music to this playlist</button>
+                  <audio id="new-clip-audio">
+                          <source src="" id="new-clip-source">
+                  </audio>
+                  {{#if waitForNewCLip}}
+                    {{> spinner}}                          
+                  {{/if}}     
+  
+                  {{#if addingNewClip}}
+                    {{> addClipPanel}} 
+                  {{/if}}
+
+                    <form>
+                      <div class="form-group"  id="playlist-notes">
+                          <label for="playlist-notes">Playlist Notes:</label>
+                          <textarea rows="5" id="playlist-notes" class="form-control" onClick='this.select()'></textarea>
+                      </div>
+                    </form>
+                    <!-- Nav tabs -->
+                    
+
+
+                  </div>
+
+                </div>
+              <div class="col-md-1">
+                <!--blank space-->
+              </div>
+
+
+              
+              <div class="col-md-5 panel panel-default" id="np-addedClips" style="padding:0px;">
+                <div class="panel-heading" width="100%">
+                  <h3 class="panel-title">Added Clips</h3>
+                </div>
+                <!-- <div class="panel panel-default panel-body"> </div> -->
+                <!-- List group -->
+                <ul id="np-added-container" class="list-group ui-sortable" style="min-height:42px;">
+                  {{#each preClip}}
+                      <li class="list-group-item btn btn-default" onclick="removeMusic(this)" id="Clocking-II-matching">
+                      <div>{{name}}<span class="glyphicon glyphicon-remove"></span></div>
+                      </li>
+                  {{/each}} 
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" onClick='MixTape.clearPlaylistModal();'>Cancel</button>
+          <button type="button" class="btn btn-primary" id="np-saveButton" onClick='MixTape.savePlaylists();'>Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>

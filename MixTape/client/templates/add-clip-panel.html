@@ -1,0 +1,23 @@
+<template name="addClipPanel">   
+  <div class="panel panel-default panel-body" id="url-container">   
+    <form id="add-clip-panel">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input name="name" type="text" class="form-control" id="clip-name" onClick='this.select()' required>
+      </div>
+      <div class="form-group">
+        <label for="url">URL:</label>
+        <input name="url" type="url" class="form-control {{errorClass}}"  id='clip-url' onClick='this.select()' required>
+        {{#if errorInClip}}
+          <label id="clip-url-error" class="error" for="clip-name">Unable play the audio in the entered URL.</label>
+        {{/if}}
+      </div>
+     
+      <div class="form-group"  id="playlist-notes">
+          <label for="playlist-notes">Clip Notes:</label>
+          <textarea rows="5" class="form-control" id='clip-notes' onClick='this.select()'></textarea>
+      </div> 
+      <input type="submit" class="btn btn-default" value="Add" style="float: right;"> <!-- onclick="MixTape.addURLClip()" -->
+    </form>
+  </div>
+</template>

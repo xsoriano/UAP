@@ -1,7 +1,4 @@
-// ACTIVE_PLAYLIST_KEY = 'ACTIVE_PLAYLIST_ID';
-// ACTIVE_CLIP_KEY = 'ACTIVE_CLIP_ID';
-// CURRENT_CLIP_KEY = "CURRENT_CLIP_KEY";
-// ACTIVE_BOOKMARK_KEY = "ACTIVE_BOOKMARK_KEY";
+
 
 if (Meteor.isClient) {
 
@@ -32,7 +29,7 @@ if (Meteor.isClient) {
 		'bookmark': function(){
 			var currentClip = Session.get('ACTIVE_CLIP_KEY');
 			var currentPlaylist = Session.get('ACTIVE_PLAYLIST_KEY');
-			var currentClipPlaylist = clipsDB.find({_id: currentClip}).fetch()[0];
+			var currentClipPlaylist = clipsDB.findOne(currentClip);
 			if (currentClipPlaylist) currentClipPlaylist = currentClipPlaylist.playlist;
 
 			if (currentClipPlaylist == currentPlaylist){
@@ -119,7 +116,7 @@ if (Meteor.isClient) {
 			Session.set('ACTIVE_PLAYLIST_KEY', this._id);
 			var currentClipKey = Session.get('CURRENT_CLIP_KEY');
 			if (currentClipKey){
-				var currentClip = clipsDB.find({_id: currentClipKey}).fetch()[0];
+				var currentClip = clipsDB.findOne(currentClipKey);
 				if (currentClip.playlist == this._id){
 					Session.set('ACTIVE_CLIP_KEY', currentClipKey);
 				}
@@ -144,7 +141,7 @@ if (Meteor.isClient) {
 			Session.set('ACTIVE_BOOKMARK_KEY', null);
 			MixTape.removeCurrentBookmark();
 			var currentClipKey = Session.get('CURRENT_CLIP_KEY');
-			var currentClipName = clipsDB.find({_id: currentClipKey}).fetch()[0].name;
+			var currentClipName = clipsDB.findOne(currentClipKey).name;
 			//If another clip is waiting to be played, this interval should be stopped.
 			if (waitForMetadata){
 				clearInterval(checkMetadata);
@@ -157,7 +154,7 @@ if (Meteor.isClient) {
 			Session.set('ACTIVE_CLIP_KEY', this._id);
 			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
 			if (currentBookmarkKey){
-				var currentBookmark = bookmarksDB.find({_id: currentBookmarkKey}).fetch()[0];
+				var currentBookmark = bookmarksDB.findOne(currentBookmarkKey);
 				if (currentBookmark.clip == this._id){
 					Session.set('ACTIVE_BOOKMARK_KEY', currentBookmarkKey);
 				}
@@ -178,7 +175,7 @@ if (Meteor.isClient) {
 		'click .music-item-play-icon': function(event){
 			Session.set('CURRENT_BOOKMARK_KEY', this._id);
 			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
-			var currentBookmarkData = bookmarksDB.find({_id: currentBookmarkKey}).fetch()[0];
+			var currentBookmarkData = bookmarksDB.findOne(currentBookmarkKey);
 			//Now need to check if there is a need of changing the source
 			if (!Session.equals('CURRENT_CLIP_KEY', currentBookmarkData.clip)){
 				console.log('different clip');
@@ -219,7 +216,7 @@ if (Meteor.isClient) {
 				Session.set('ACTIVE_BOOKMARK_KEY', null);
 				var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
 				if (currentBookmarkKey){
-					var currentBookmarkData = bookmarksDB.find({_id: currentBookmarkKey}).fetch()[0];
+					var currentBookmarkData = bookmarksDB.findOne(currentBookmarkKey);
 					if (Session.equals('CURRENT_CLIP_KEY', currentBookmarkData.clip)){	
 						MixTape.removeCurrentBookmark();
 						Session.set('CURRENT_BOOKMARK_KEY', null);

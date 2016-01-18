@@ -133,6 +133,9 @@ $(document).ready(function() {
 	clip.addEventListener('waiting', function() {
 		Session.set('wait_for_buffering',true);
 	});
+	clip.addEventListener('error', function() {
+		console.log('couldnt play track');
+	});
 	
 });
 
@@ -222,7 +225,7 @@ MixTape.addNewBookmark= function(e){
 }
 
 MixTape.setCurrentClipPlayer = function(currentClipKey, currentBookmarkKey){
-	var clipData = clipsDB.find({_id:currentClipKey}).fetch()[0];
+	var clipData = clipsDB.findOne(currentClipKey);
 	var clipSource = clipData.source;
 	var clipName = clipData.name;
 	var clipStart = clipData.startTime;
@@ -253,8 +256,9 @@ MixTape.setCurrentClipPlayer = function(currentClipKey, currentBookmarkKey){
 
 MixTape.updateUIForNewClip = function(currentClipName, startTime, endTime){
 	$("#track-name-container").html("<a>"+ currentClipName + "</a>");
+	var thumbContri = $('#progress_thumb_id').width()/2
 	basicBehavior.centerTrackName();
-	document.getElementById('progress_thumb_id').style.left = - $('#progress_thumb_id').width()/2+'px';
+	document.getElementById('progress_thumb_id').style.left = - thumbContri+'px';
 	document.getElementById('progress_bar_id').style.width = 0+'px';
 	clip_time_played_ms = 0;
 	$(".time_passed").html("0:00");
@@ -264,7 +268,7 @@ MixTape.updateUIForNewClip = function(currentClipName, startTime, endTime){
 }
 
 MixTape.setCurrentBookmark = function(selectedBookmarkId, forcePlay){
-	var bookmarkData = bookmarksDB.find({_id:selectedBookmarkId}).fetch()[0];
+	var bookmarkData = bookmarksDB.findOne(selectedBookmarkId);
 	var bookmarkClip = bookmarkData.clip;	
 	if(Session.equals('CURRENT_CLIP_KEY',bookmarkClip)){
 		Session.set('CURRENT_BOOKMARK_KEY', selectedBookmarkId);
@@ -338,16 +342,17 @@ MixTape.adjustBookmarkMarkers = function(bookmarkStart, bookmarkEnd){
 		var progress_percent = bookmarkStart/clip_time_length_ms;
 		
 		var offset = $('#track_background_id').width();
-		document.getElementById('progress_thumb_id').style.left = (offset*progress_percent- $('#progress_thumb_id').width()/2)+'px';
+		var thumbContri = $('#progress_thumb_id').width()/2
+		document.getElementById('progress_thumb_id').style.left = (offset*progress_percent- thumbContri)+'px';
 		document.getElementById('progress_bar_id').style.width = (offset*progress_percent)+'px';
 
-		document.getElementById('bookmark_time_start').style.left = (offset*progress_percent - $('#progress_thumb_id').width()/2 - 6)+'px';
-		document.getElementById('bookmark_marker_start').style.left = (offset*progress_percent - $('#progress_thumb_id').width()/2 + 1) +'px';
+		document.getElementById('bookmark_time_start').style.left = (offset*progress_percent - thumbContri - 6)+'px';
+		document.getElementById('bookmark_marker_start').style.left = (offset*progress_percent - thumbContri + 1) +'px';
 
 		progress_percent = bookmarkEnd/clip_time_length_ms;
 
-		document.getElementById('bookmark_time_end').style.left = (offset*progress_percent - $('#progress_thumb_id').width()/2 - 6)+'px';
-		document.getElementById('bookmark_marker_end').style.left = (offset*progress_percent - $('#progress_thumb_id').width()/2 - 1)+'px';
+		document.getElementById('bookmark_time_end').style.left = (offset*progress_percent - thumbContri - 6)+'px';
+		document.getElementById('bookmark_marker_end').style.left = (offset*progress_percent - thumbContri - 1)+'px';
 
 		document.getElementById('bookmark_marker_start').style.visibility = 'visible';
 		document.getElementById('bookmark_marker_end').style.visibility = 'visible';
@@ -408,25 +413,25 @@ console.log("End dragging");
 // 				var right_position = $('#bookmark_marker_end').position().left;
 
 // 				if(new_pos < left_position){
-// 					document.getElementById('progress_thumb_id').style.left = left_position- $('#progress_thumb_id').width()/2 +'px';
+// 					document.getElementById('progress_thumb_id').style.left = left_position- thumbContri +'px';
 // 					document.getElementById('progress_bar_id').style.width = left_position +'px';
 // 				} else if(new_pos > right_position){
-// 					document.getElementById('progress_thumb_id').style.left = right_position- $('#progress_thumb_id').width()/2 +'px';
+// 					document.getElementById('progress_thumb_id').style.left = right_position- thumbContri +'px';
 // 					document.getElementById('progress_bar_id').style.width = right_position +'px';
 // 				} else {
-// 					document.getElementById('progress_thumb_id').style.left = new_pos- $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_thumb_id').style.left = new_pos- thumbContri+'px';
 // 					document.getElementById('progress_bar_id').style.width = new_pos+'px';
 // 				}
 
 // 			} else{
 // 				if(new_pos < 0){
-// 					document.getElementById('progress_thumb_id').style.left = - $('#progress_thumb_id').width()/2+'px';
-// 					document.getElementById('progress_bar_id').style.width = - $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_thumb_id').style.left = - thumbContri+'px';
+// 					document.getElementById('progress_bar_id').style.width = - thumbContri+'px';
 // 				} else if(new_pos > document.getElementById('track_background_id').offsetWidth){
-// 					document.getElementById('progress_thumb_id').style.left = document.getElementById('track_background_id').offsetWidth- $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_thumb_id').style.left = document.getElementById('track_background_id').offsetWidth- thumbContri+'px';
 // 					document.getElementById('progress_bar_id').style.width = document.getElementById('track_background_id').offsetWidth+'px';
 // 				} else {
-// 					document.getElementById('progress_thumb_id').style.left = new_pos- $('#progress_thumb_id').width()/2+'px';
+// 					document.getElementById('progress_thumb_id').style.left = new_pos- thumbContri+'px';
 // 					document.getElementById('progress_bar_id').style.width = new_pos+'px';
 // 				}
 // 			}
@@ -454,14 +459,17 @@ MixTape.clearHelpText = function(e){
 //Update time_passed
 MixTape.updateTimePassed = function(){
 	var currentClip = Session.get('CURRENT_CLIP_KEY');
+	var clip_time_length_ms = Session.get('clip_duration');
 	if (currentClip){
-		var minutes = Math.floor(clip_time_played_ms/(60*1000));
-		var seconds = Math.floor(clip_time_played_ms/1000)%60;
-		if(seconds < 10){
-			$(".time_passed").html(""+minutes+":0"+seconds);
-		}else{
-			$(".time_passed").html(""+minutes+":"+seconds);
-		}
+		if (clip_time_played_ms < clip_time_length_ms){
+			var minutes = Math.floor(clip_time_played_ms/(60*1000));
+			var seconds = Math.floor(clip_time_played_ms/1000)%60;
+			if(seconds < 10){
+				$(".time_passed").html(""+minutes+":0"+seconds);
+			}else{
+				$(".time_passed").html(""+minutes+":"+seconds);
+			}
+		}	
 	}
 }
 
@@ -469,10 +477,11 @@ MixTape.resetProgressElements = function(){
 	var currentBookmark = Session.get('CURRENT_BOOKMARK_KEY');
 
 	if(currentBookmark){
-		var bookmarkData = bookmarksDB.find({_id:currentBookmark}).fetch()[0];
+		var bookmarkData = bookmarksDB.findOne(currentBookmark);
 		var bookmarkStart = bookmarkData.startTime;
 		var leftPos = $('#bookmark_marker_start').position().left;
-		document.getElementById('progress_thumb_id').style.left = leftPos - $('#progress_thumb_id').width()/2+'px';
+		var thumbContri = $('#progress_thumb_id').width()/2
+		document.getElementById('progress_thumb_id').style.left = leftPos - thumbContri+'px';
 		document.getElementById('progress_bar_id').style.width = leftPos+'px';
 		clip_time_played_ms = bookmarkStart;
 		var clip = document.getElementById('current-clip');
@@ -490,8 +499,9 @@ MixTape.adjustProgressElements = function(){
 	var clip_time_length_ms = Session.get('clip_duration');
 	var progress_percent = clip_time_played_ms/clip_time_length_ms;
 	//console.log('Percent played: ' + progress_percent);
+	var thumbContri = $('#progress_thumb_id').width()/2
 	var offset = document.getElementById('track_background_id').offsetWidth;
-	document.getElementById('progress_thumb_id').style.left = (offset * progress_percent - $('#progress_thumb_id').width()/2)+'px';
+	document.getElementById('progress_thumb_id').style.left = (offset * progress_percent - thumbContri)+'px';
 	document.getElementById('progress_bar_id').style.width = (offset*progress_percent)+'px';
 
 	MixTape.updateTimePassed();
@@ -574,7 +584,7 @@ MixTape.trackTimer= function() {
 		// added condition that if the currentSrc becomes null, then the track player should stop moving.
 		var currentClipKey = Session.get('CURRENT_CLIP_KEY');
 		if (currentClipKey){
-			var currentClip = clipsDB.find({_id:currentClipKey}).fetch()[0];
+			var currentClip = clipsDB.findOne(currentClipKey);
 			var clip_time_length_ms = Session.get('clip_duration');
 			if(clip_time_played_ms >= clip_time_length_ms || currentClip.source == null){
 				MixTape.togglePlay();
@@ -591,7 +601,7 @@ MixTape.trackTimer= function() {
 
 }
 
-MixTape.clickTrack= function(e){
+MixTape.clickTrack = function(e){
 	var currentClipKey = Session.get('CURRENT_CLIP_KEY');
 	if (currentClipKey){
 		currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
@@ -605,10 +615,10 @@ MixTape.clickTrack= function(e){
 			if(new_pos < left_position){
 				console.log("left position")
 				document.getElementById('progress_thumb_id').style.left = left_position +'px';
-				document.getElementById('progress_bar_id').style.width = left_position +'px';
+				document.getElementById('progress_bar_id').style.width = left_position + thumbContri +'px';
 			} else if(new_pos > right_position){
 				document.getElementById('progress_thumb_id').style.left = right_position +'px';
-				document.getElementById('progress_bar_id').style.width = right_position +'px';
+				document.getElementById('progress_bar_id').style.width = right_position - thumbContri+'px';
 			} else {
 				document.getElementById('progress_thumb_id').style.left = new_pos - thumbContri+'px';
 				document.getElementById('progress_bar_id').style.width = new_pos+'px';
@@ -618,18 +628,18 @@ MixTape.clickTrack= function(e){
 		} else{
 
 			if(new_pos < 0){
-				document.getElementById('progress_thumb_id').style.left = - $('#progress_thumb_id').width()/2 +'px';
-				document.getElementById('progress_bar_id').style.width = 0+'px';
+				document.getElementById('progress_thumb_id').style.left = - thumbContri +'px';
+				document.getElementById('progress_bar_id').style.width = - thumbContri+'px';
 			} else if(new_pos > document.getElementById('track_background_id').offsetWidth){
 				document.getElementById('progress_thumb_id').style.left = (document.getElementById('track_background_id').offsetWidth - thumbContri)+'px';
-				document.getElementById('progress_bar_id').style.width = document.getElementById('track_background_id').offsetWidth+'px';
+				document.getElementById('progress_bar_id').style.width = document.getElementById('track_background_id').offsetWidth + thumbContri+'px';
 			} else {
 				document.getElementById('progress_thumb_id').style.left = (new_pos - thumbContri) +'px';
 				document.getElementById('progress_bar_id').style.width = new_pos+'px';
 			}
 		}
 
-		var current_width = document.getElementById('progress_bar_id').offsetWidth + thumbContri;
+		var current_width = document.getElementById('progress_bar_id').offsetWidth;
 		var max_width = document.getElementById('track_background_id').offsetWidth;
 		var progress_percent = current_width/max_width;
 		var clip_time_length_ms = Session.get('clip_duration');

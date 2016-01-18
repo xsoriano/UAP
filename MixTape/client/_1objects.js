@@ -1,3 +1,4 @@
+console.log('Hello, World from Objects!')
 MixTape = function() {};
 
 
@@ -279,21 +280,40 @@ Clip.prototype.init_existing_id = function(id){
 
 //A to be added clip
 preClip = function(){
-
+	this.type = 'preclip';
+	console.log("A preclip");
 }
 
 preClip.prototype = {
 	// declare all the functions that clip should support to inherit
-	add: function(playlist){
+	addClip: function(playlistId){
 		// console.log("Adding to add clip");
-		var clip = new Clip().init_new(this.name, playlist, this.url);
+		clipsDB.insert({
+			owner : Meteor.userId(),
+			playlist : playlistId,
+			name : name,
+			source : src,
+			rank : clipsDB.find({playlist : playlistId}).count() +1,
+			notes: notes,
+			duration: duration
+		});
 		return clip;
 	}
 };
 
-preClip.prototype.init_new = function(name, url){
+preClip.prototype.init_new = function(name, url, notes, duration){
+	preClipsDB.insert({
+		owner : Meteor.userId(),
+		name : name,
+		url : url,
+		rank : preClipsDB.find({owner : Meteor.userId()}).count() +1,
+		notes: notes,
+		duration: duration
+	});
 	this.name = name;
 	this.url = url;
+	this.notes = notes;
+	this.duration = duration;
 	return this;
 }
 

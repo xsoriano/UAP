@@ -1,0 +1,9 @@
+/* This is the css file for mixtape*/
+input.error{
+    background-color:rgb(255, 231, 231) !important;
+}
+
+form label.error{
+	float: right;
+	color: red;
+}
