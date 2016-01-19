@@ -3,12 +3,12 @@
   <div id="newPlaylistWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='MixTape.clearPlaylistModal();'>
+        <div class="modal-header" style="padding-bottom:20px;">
+          <button id="np-top-btn-close" type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='MixTape.clearPlaylistModal();'>
             <span aria-hidden="true">&times;</span>
           </button>
-          <form>
-            <input placeholder="New Playlist Name" type="text" class="form-control" id="recipient-name" onclick="this.select()">
+          <form id="add-playlist-form">
+            <input name="name" type="text" class="form-control" id="recipient-playlist-name" placeholder="New Playlist Name" onclick="this.select()" required>
           </form>
         </div>
 
@@ -56,12 +56,14 @@
                 </div>
                 <!-- <div class="panel panel-default panel-body"> </div> -->
                 <!-- List group -->
-                <ul id="np-added-container" class="list-group ui-sortable" style="min-height:42px;">
-                  {{#each preClip}}
-                      <li class="list-group-item btn btn-default" onclick="removeMusic(this)" id="Clocking-II-matching">
-                      <div>{{name}}<span class="glyphicon glyphicon-remove"></span></div>
-                      </li>
-                  {{/each}} 
+                <ul id="np-added-container" class="list-group" style="min-height:42px;">
+                  <div id="addedPreClips">
+                    {{#each preClip}}
+                        <li class="list-group-item btn btn-default preClip-item" id={{_id}}><span class="handle glyphicon glyphicon-sort"></span>
+                          {{name}}<span class="remove glyphicon glyphicon-remove"></span>
+                        </li>
+                    {{/each}} 
+                  </div>
                 </ul>
               </div>
 
@@ -71,7 +73,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal" onClick='MixTape.clearPlaylistModal();'>Cancel</button>
-          <button type="button" class="btn btn-primary" id="np-saveButton" onClick='MixTape.savePlaylists();'>Save</button>
+          <input type="submit" class="btn btn-primary" value="Save" form="add-playlist-form"> 
         </div>
       </div>
     </div>

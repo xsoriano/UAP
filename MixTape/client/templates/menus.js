@@ -43,7 +43,8 @@ if (Meteor.isClient) {
 		}
 	});
 
-	function reorderMenus(ui, collection){
+	reorderMenus = function(ui, collection){
+		if(collection.find({owner:Meteor.userId()}).count()>1){
 		el = ui.item.get(0)
 		before = ui.item.prev().get(0)
 		after = ui.item.next().get(0)
@@ -55,11 +56,11 @@ if (Meteor.isClient) {
 		if(!before) {
 		//if it was dragged into the first position grab the
 		// next element's data context and subtract one from the rank
-		newRank = Blaze.getData(after).rank - 1
+		newRank = Blaze.getData(after).rank - 1;
 		} else if(!after) {
 		//if it was dragged into the last position grab the
 		//  previous element's data context and add one to the rank
-		newRank = Blaze.getData(before).rank + 1
+		newRank = Blaze.getData(before).rank + 1;
 		}
 		else
 		//else take the average of the two ranks of the previous
@@ -69,6 +70,7 @@ if (Meteor.isClient) {
 
 		//update the dragged Item's rank
 		collection.update({_id: Blaze.getData(el)._id}, {$set: {rank: newRank}})
+		}
 	}
 
 	//Once the Template is rendered, run this function which

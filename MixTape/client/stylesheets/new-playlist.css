@@ -7,3 +7,28 @@ form label.error{
 	float: right;
 	color: red;
 }
+
+.preClip-item>.handle{
+	float: left;
+    color: rgb(157, 157, 157);
+}
+
+.preClip-item>.remove{
+	float: right;
+    color: rgb(157, 157, 157);
+    visibility: hidden;
+}
+
+.preClip-item>.handle:hover{
+	color: black;
+	cursor: pointer; cursor: move;
+}
+
+.preClip-item>.remove:hover{
+	color: black;
+	cursor: pointer; cursor: select;
+}
+
+.preClip-item{
+	cursor: default !important;
+}

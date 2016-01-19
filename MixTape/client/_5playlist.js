@@ -1,67 +1,112 @@
 var waitForNewCLip = null;
 preClipsDB = new Mongo.Collection(null);
-preClips = []
 
-$.validator.addMethod("noRepeatedNames", function(value, element) {
+$.validator.addMethod("noRepeatedPreClipNames", function(value, element) {
 	return !(preClipsDB.find({name : value}).count()>0);
   
 }, "A clip with this name already exists.");
+
+$.validator.addMethod("noRepeatedPlaylistNames", function(value, element) {
+	return !(playlistsDB.find({name : value, owner : Meteor.userId()}).count()>0);
+  
+}, "A playlist with this name already exists.");
 
 // everything that is dealing with or updating the new playlist dialog is going in here...
 
 
 Template.addClipPanel.onRendered(function(){
-    $('#add-clip-panel').validate({
+    var validator = $('#add-clip-panel').validate({
         rules: {
             name: {
                 required: true,
-                noRepeatedNames: true
+                noRepeatedPreClipNames: true
             },
             url: {
                 required: true,
                 url: true
+            },
+        },
+        messages: {
+            name: {
+                required: "You must enter an clip name.",
+            },
+            url: {
+                required: "You must enter a clip URL.",
+                minlength: "Your must enter a valid URL."
             }
+        },
+        submitHandler: function(event){
+        	addURLClipToAddedClips(validator);
+        	
         }
     });
-    var clip_url = document.getElementById('clip-url');
-    clip_url.addEventListener('input', function() {
-		console.log('Pressed the key!');
-		if(Session.get('error_new_clip')){
-			Session.set('error_new_clip',false);
-		}
-	});
 });
 
-Template.addClipPanel.helpers({
-	errorInClip: function () {
-		return Session.get('error_new_clip');
-	},
-	
-	'errorClass': function(){
-			return Session.get('error_new_clip') && 'error';
-	}
-});
+
 
 Template.addClipPanel.events({
 	'submit form': function(event){
 		event.preventDefault();
-		console.log('this is the submit');
-		MixTape.addURLClip();
     }
 });
 
+Template.newPlaylist.onRendered(function() {
+	this.$('#addedPreClips').sortable({
+		stop: function(e, ui) {
+  			reorderMenus(ui, preClipsDB)
+		},
+		handle: '.handle' 
+	});
+
+	this.$('#add-playlist-form').validate({
+        rules: {
+            name: {
+                required: true,
+                noRepeatedPlaylistNames: true
+            },
+        },
+        messages: {
+            name: {
+                required: "You must enter an playlist name."
+            },
+        },
+        submitHandler: function(event){
+        	console.log('submitted the playlist');
+        	createNewPlaylist($('#recipient-playlist-name').val(),$('#playlist-notes').val());
+        	$('#np-top-btn-close').trigger('click');     	
+        }
+    });
+
+});
+
 Template.newPlaylist.events({
-  'click #show-add': function (e) {
-  	e.preventDefault();
-  	$(e.currentTarget).blur();
-    $(e.currentTarget).toggleClass('active');
-    if ($(e.currentTarget).hasClass('active')){
-    	Session.set('adding_new_clip',true);
-    	Session.set('error_new_clip',false);
-    }else{
-    	Session.set('adding_new_clip',false);
+	'click #show-add': function (e) {
+		e.preventDefault();
+		$(e.currentTarget).blur();
+		$(e.currentTarget).toggleClass('active');
+		if ($(e.currentTarget).hasClass('active')){
+			Session.set('adding_new_clip',true);
+			Session.set('error_new_clip',false);
+		}else{
+			Session.set('adding_new_clip',false);
+		}
+	},
+
+	'mouseenter .preClip-item': function(event){
+		$('#' + this._id + ' .remove').css( "visibility", "visible");
+	},
+
+	'mouseleave .preClip-item': function(event){ 
+		$('#' + this._id + ' .remove').css( "visibility", "hidden");
+	},
+
+	'click .remove': function(event){
+		preClipsDB.remove(this._id);
+	},
+	'submit form': function(event){
+		console.log('Default submit prevented');
+		event.preventDefault();
     }
-  }
 });
 
 
@@ -88,18 +133,17 @@ $(document).ready(function() {
 
 	
 	new_clip_audio.addEventListener('loadedmetadata', function() {
-		console.log('New clip metadata loaded');
+		console.log('loadedmetadata');
 		Session.set('wait_for_new_clip',false);
 	});
 
 	new_clip_source.addEventListener('error', function() {
-		console.log('error in clip data');
+		console.log('error');
 		Session.set('error_new_clip',true);
 	});
 });
 
-MixTape.addURLClip= function(){
-	
+function addURLClipToAddedClips(validator){	
 	var clipName = $('#clip-name').val();
 	var clipURL = $('#clip-url').val();
 	var clipNotes = $('#clip-notes').val();
@@ -113,31 +157,65 @@ MixTape.addURLClip= function(){
 		if (!Session.get('wait_for_new_clip')){
 			clearInterval(waitForNewCLip);
 			var duration = new_clip_audio.duration;
-			var clipToAdd = new preClip().init_new(clipName, clipURL, clipNotes, duration);
-			preClips.push(clipToAdd);
+			createPreClip(clipName, clipURL, clipNotes, duration);
+			$('#add-clip-panel')[0].reset();
 		}
 		else if(Session.get('error_new_clip')){
 			clearInterval(waitForNewCLip);
 			Session.set('wait_for_new_clip',false);
+			validator.showErrors({
+            	url: "Unable play the audio in the provided URL."   
+        	});
 		}
 	}, 250);
-	// var clipToAdd = new preClip().init_new(clipName, clipURL);
-	// var otherMenu = document.getElementById('np-added-container');
-	// MixTape.addItemToDialog(otherMenu, clipName, '-matching', 'MixTape.removeMusic(this)');
-	// addedClips.push(clipToAdd);
 }
 
-function noRepeatedNames(name){
-	return !(preClipsDB.find({name : name}).count()>0);
+function createPreClip(clipName, clipURL, clipNotes, clipDuration){
+	//you just need a higher rank, not necessarily integral.
+	var clipRank = (preClipsDB.find().count()>0) ? (preClipsDB.findOne({}, {sort: {rank: -1}}).rank + 0.05) : 0;
+	preClipsDB.insert({
+		owner : Meteor.userId(),
+		name : clipName,
+		url : clipURL,
+		rank : clipRank,
+		notes: clipNotes,
+		duration: clipDuration
+	});
+}
+
+function createNewPlaylist(playlistName,playlistNotes){
+	var playlistRank = (playlistsDB.find({owner: Meteor.userId()}).count()>0) ? playlistsDB.findOne({}, {sort: {rank: -1}}).rank + 0.05 : 0;
+	playlistsDB.insert({
+		owner : Meteor.userId(),
+		name : playlistName,
+		rank : playlistRank,
+		notes: playlistNotes,
+	});
+	var playlistId = playlistsDB.findOne({}, {sort: {rank: -1}})._id;
+	while(preClipsDB.find().count()>0){
+		var preClip = preClipsDB.findOne({owner:Meteor.userId()}, {sort: {rank: 1}});
+		clipsDB.insert({
+			owner : Meteor.userId(),
+			playlist: playlistId,
+			name : preClip.name,
+			source : preClip.url,
+			rank : preClip.rank,
+			notes: preClip.notes,
+			duration: preClip.duration
+		});
+		preClipsDB.remove(preClip._id);
+	}
 }
 
 
 
 MixTape.newPlaylist= function() {
-	$('#newPlaylistWindow').modal('show'); // call rachel's playlist dialog
+	$('#newPlaylistWindow').modal('show'); 
 	Session.set('error_new_clip',false);
 	// MixTape.fillDummyDialog();
 }
+
+
 // add to the menu a new item
 // Needs to be modified!!
 MixTape.addItemToDialog = function(computer, item, matching, func){
