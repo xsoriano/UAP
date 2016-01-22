@@ -104,7 +104,6 @@ Template.newPlaylist.events({
 		preClipsDB.remove(this._id);
 	},
 	'submit form': function(event){
-		console.log('Default submit prevented');
 		event.preventDefault();
     }
 });
@@ -367,5 +366,7 @@ MixTape.addDummyURL= function(menu, url){
 MixTape.clearPlaylistModal = function(){
 	preClipsDB.remove({});
 	$('#show-add').removeClass('active');
+	$('#add-playlist-form')[0].reset();
+	$('#playlist-notes').val('');
 	Session.set('adding_new_clip', false);
 }
