@@ -1,8 +1,44 @@
 
-
-	
 	var SEMAPHORE = 0; 	
 	var bookmarkId;
+
+Template.newBookmark.helpers({
+	'playlist': function(){
+		return playlistsDB.find({owner:Meteor.userId()},{sort: {rank: 1}});
+	},
+
+	'selectedPlaylist': function(){
+
+		return Session.equals('SELECTED_NB_PLAYLIST_KEY', this._id) && 'selected';
+
+	},
+	'clip': function(){
+		var currentPlaylist = Session.get('SELECTED_NB_PLAYLIST_KEY');
+		return clipsDB.find({playlist:currentPlaylist},{sort: {rank: 1}});
+	},
+
+	'selectedClip': function(){
+		return Session.equals('SELECTED_NB_CLIP_KEY', this._id) && 'selected';
+	}
+	});
+Template.newBookmark.events({
+	'change #new-bookmark-playlist': function (event) {
+		var currentTarget = event.currentTarget;
+		var newValue = currentTarget.options[currentTarget.selectedIndex].value;
+		Session.set('SELECTED_NB_PLAYLIST_KEY', newValue);
+		Session.set('SELECTED_NB_CLIP_KEY', null);
+  	},
+  	'change #new-bookmark-clip': function (event) {
+		var currentTarget = event.currentTarget;
+		var newValue = currentTarget.options[currentTarget.selectedIndex].value;
+		Session.set('SELECTED_NB_CLIP_KEY', newValue);
+  	}
+
+});
+
+MixTape.openNewBookmarkWindow = function() {
+	$('#newBookmarkWindow').modal('show'); 
+}
 
 MixTape.addBookmarkEditorFunctionality = function(bookmark){
 		

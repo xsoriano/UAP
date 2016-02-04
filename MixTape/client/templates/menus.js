@@ -2,6 +2,7 @@
 
 if (Meteor.isClient) {
 
+	
 	Template.menuPlaylists.helpers({
 		'playlist': function(){
 			return playlistsDB.find({owner:Meteor.userId()},{sort: {rank: 1}});

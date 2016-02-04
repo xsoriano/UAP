@@ -53,25 +53,25 @@ basicBehavior.setSectionHeights = function(){
     $('.music-section').css("height", sectionHeight);
 }
 
-basicBehavior.loadPlaylists = function(playlistsSubscription){
-	//First make sure that nothing was in the playlist array already	
-	console.log("Waiting for collection");
-	if (playlistsSubscription.ready()) {
-		console.log("It loaded!!");
-		clearInterval(collectionLoadChecker);
-   		playlists.splice(0,playlists.length);
-		var refreshedPlaylists = playlistsDB.find({owner : Meteor.userId()}, {sort: {sortOrder: 1} })
-		refreshedPlaylists.forEach(function(e){
-			playlists.push(new Playlist().init_existing_id(e._id));
-		});
+// basicBehavior.loadPlaylists = function(playlistsSubscription){
+// 	//First make sure that nothing was in the playlist array already	
+// 	console.log("Waiting for collection");
+// 	if (playlistsSubscription.ready()) {
+// 		console.log("It loaded!!");
+// 		clearInterval(collectionLoadChecker);
+//    		playlists.splice(0,playlists.length);
+// 		var refreshedPlaylists = playlistsDB.find({owner : Meteor.userId()}, {sort: {sortOrder: 1} })
+// 		refreshedPlaylists.forEach(function(e){
+// 			playlists.push(new Playlist().init_existing_id(e._id));
+// 		});
 		
-		if (playlists.length >0){
-			MixTape.updateMenus();
-			MixTape.setCurrentPlaylist(0);
-		}
-	}	
+// 		if (playlists.length >0){
+// 			MixTape.updateMenus();
+// 			MixTape.setCurrentPlaylist(0);
+// 		}
+// 	}	
 
-}
+// }
 
 basicBehavior.helloWorld = function(){
 	console.log("hello world!");
