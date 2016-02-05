@@ -32,3 +32,7 @@ form label.error{
 .preClip-item{
 	cursor: default !important;
 }
+
+select.error, textarea.error{
+    background-color:rgb(255, 231, 231) !important;
+}

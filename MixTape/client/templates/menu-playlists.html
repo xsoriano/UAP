@@ -10,7 +10,8 @@
         {{#each playlist}}
 
           <li class="list-group-item playlist {{activeClass}}" id={{_id}}>
-            <div><span class="glyphicon glyphicon-play music-item-play-icon" style="visibility: hidden;"></span>{{name}}</div>
+            <div class="list-group-item-heading {{activeHeadingClass}}"><span class="glyphicon glyphicon-play music-item-play-icon" style="visibility: hidden;"></span>{{name}}</div>
+            <p class="list-group-item-text active-menu-item-text">{{notes}}</p>
           </li>
           {{/each}}
         </div>

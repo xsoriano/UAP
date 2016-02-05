@@ -48,13 +48,13 @@ $(document).ready(function() {
     axis : "x"
 
 	});
-    var bookmark_btn = document.getElementById('btnBookmark');
-    var input_start_time = document.getElementById('inputStartTime');
-    var input_end_time = document.getElementById('inputEndTime');
+    // var bookmark_btn = document.getElementById('btnBookmark');
+    // var input_start_time = document.getElementById('inputStartTime');
+    // var input_end_time = document.getElementById('inputEndTime');
 
-    input_start_time.addEventListener("focus", MixTape.clearHelpText);
-    input_end_time.addEventListener("focus", MixTape.clearHelpText);
-    bookmark_btn.addEventListener('click', MixTape.addNewBookmark);
+    // input_start_time.addEventListener("focus", MixTape.clearHelpText);
+    // input_end_time.addEventListener("focus", MixTape.clearHelpText);
+    // bookmark_btn.addEventListener('click', MixTape.addNewBookmark);
 
     progress_thumb.addEventListener('mousedown', MixTape.startDragging);
     progress_thumb.addEventListener('mousemove', MixTape.hoverTrack);

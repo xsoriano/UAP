@@ -28,11 +28,11 @@ Template.addClipPanel.onRendered(function(){
         },
         messages: {
             name: {
-                required: "You must enter an clip name.",
+                required: "You must enter a clip name.",
             },
             url: {
                 required: "You must enter a clip URL.",
-                minlength: "Your must enter a valid URL."
+                url: "Your must enter a valid URL."
             }
         },
         submitHandler: function(event){
@@ -208,7 +208,7 @@ function createNewPlaylist(playlistName,playlistNotes){
 
 
 
-MixTape.newPlaylist= function() {
+MixTape.newPlaylist = function() {
 	$('#newPlaylistWindow').modal('show'); 
 	Session.set('error_new_clip',false);
 	// MixTape.fillDummyDialog();

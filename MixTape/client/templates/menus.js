@@ -9,10 +9,20 @@ if (Meteor.isClient) {
 		},
 
 		'activeClass': function(){
-
 			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'active';
 
+		},
+		'activeHeadingClass': function(){
+
+			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'active-menu-item-heading';
+
+		},
+		'showMenu': function(){
+
+			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'block';
+
 		}
+		
 	});
 
 	Template.menuClips.helpers({
@@ -23,6 +33,16 @@ if (Meteor.isClient) {
 
 		'activeClass': function(){
 			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'active';
+		},
+		'activeHeadingClass': function(){
+
+			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'active-menu-item-heading';
+
+		},
+		'showMenu': function(){
+
+			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'block';
+
 		}
 	});
 
@@ -41,6 +61,16 @@ if (Meteor.isClient) {
 
 		'activeClass': function(){
 			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'active';
+		},
+		'activeHeadingClass': function(){
+
+			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'active-menu-item-heading';
+
+		},
+		'noDisplay': function(){
+
+			return !Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'none';
+
 		}
 	});
 
@@ -116,12 +146,23 @@ if (Meteor.isClient) {
 
 		'click .playlist': function(event){
 			console.log("hit the menu")
+			Session.set('ACTIVE_CLIP_KEY', null);
+			var oldPlaylist = Session.get('ACTIVE_PLAYLIST_KEY');
 			Session.set('ACTIVE_PLAYLIST_KEY', this._id);
+			var newPlaylist = Session.get('ACTIVE_PLAYLIST_KEY');
+			if (oldPlaylist != newPlaylist){
+				if (oldPlaylist){	
+					$( "#" + oldPlaylist + ">.active-menu-item-text" ).slideToggle(400);
+				}
+			
+				$( "#" + this._id + ">.active-menu-item-text" ).slideToggle(400);
+			}	
 			var currentClipKey = Session.get('CURRENT_CLIP_KEY');
 			if (currentClipKey){
 				var currentClip = clipsDB.findOne(currentClipKey);
 				if (currentClip.playlist == this._id){
 					Session.set('ACTIVE_CLIP_KEY', currentClipKey);
+					$( "#" + currentClipKey + ">.active-menu-item-text" ).slideToggle(400);
 				}
 			}
 			
@@ -154,7 +195,17 @@ if (Meteor.isClient) {
 		},
 
 		'click .clip': function(event){
+			var oldClip = Session.get('ACTIVE_CLIP_KEY');
 			Session.set('ACTIVE_CLIP_KEY', this._id);
+			var newClip = Session.get('ACTIVE_CLIP_KEY');
+			if (oldClip != newClip){
+				if (oldClip){	
+					$( "#" + oldClip + ">.active-menu-item-text" ).slideToggle(400);
+				}
+			
+				$( "#" + this._id + ">.active-menu-item-text" ).slideToggle(400);
+			}	
+			
 			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
 			if (currentBookmarkKey){
 				var currentBookmark = bookmarksDB.findOne(currentBookmarkKey);
