@@ -36,16 +36,27 @@ body{
 	position: relative;
 }
 
-.music-item-play-icon{
+.music-play-item-icon{
 	margin-right: 5px;
 	padding: 7px;
 	color: rgb(157, 157, 157);
 	visibility: hidden;
 }
 
-.music-item-play-icon:hover{
+.edit-item-icon{
+	float: right;
+	color: rgb(157, 157, 157);
+	visibility: hidden;
+}
+
+.music-play-item-icon:hover{
 	color: black;
-	cursor: pointer; cursor: hand
+	cursor: pointer; cursor: hand;
+}
+
+.edit-item-icon:hover{
+	color: black;
+	cursor: pointer; cursor: hand;
 }
 
 

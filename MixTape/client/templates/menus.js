@@ -21,8 +21,12 @@ if (Meteor.isClient) {
 
 			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'block';
 
+		},
+		'showEditIcon': function(){
+
+			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'visible';
+
 		}
-		
 	});
 
 	Template.menuClips.helpers({
@@ -34,15 +38,20 @@ if (Meteor.isClient) {
 		'activeClass': function(){
 			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'active';
 		},
+
 		'activeHeadingClass': function(){
 
 			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'active-menu-item-heading';
 
 		},
+
 		'showMenu': function(){
 
 			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'block';
+		},
 
+		'showEditIcon': function(){
+			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'visible';
 		}
 	});
 
@@ -67,10 +76,12 @@ if (Meteor.isClient) {
 			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'active-menu-item-heading';
 
 		},
-		'noDisplay': function(){
+		'showMenu': function(){
 
-			return !Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'none';
-
+			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'block';
+		},
+		'showEditIcon': function(){
+			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'visible';
 		}
 	});
 
@@ -140,12 +151,11 @@ if (Meteor.isClient) {
 		// 	$('#' + this._id + ' div span').css( "visibility", "hidden");
 		// },
 
-		'click .music-item-play-icon': function(event){
+		'click .music-play-item-icon': function(event){
 			console.log("hit the play")
 		},
 
 		'click .playlist': function(event){
-			console.log("hit the menu")
 			Session.set('ACTIVE_CLIP_KEY', null);
 			var oldPlaylist = Session.get('ACTIVE_PLAYLIST_KEY');
 			Session.set('ACTIVE_PLAYLIST_KEY', this._id);
@@ -172,14 +182,14 @@ if (Meteor.isClient) {
 
 	Template.menuClips.events({
 		'mouseenter .clip': function(event){
-			$('#' + this._id + ' div span').css( "visibility", "visible");
+			$('#' + this._id + ' div .music-play-item-icon').css( "visibility", "visible");
 		},
 
 		'mouseleave .clip': function(event){ 
-			$('#' + this._id + ' div span').css( "visibility", "hidden");
+			$('#' + this._id + ' div .music-play-item-icon').css( "visibility", "hidden");
 		},
 
-		'click .music-item-play-icon': function(event){
+		'click .music-play-item-icon': function(event){
 			Session.set('CURRENT_CLIP_KEY', this._id);
 			Session.set('CURRENT_BOOKMARK_KEY', null);
 			Session.set('ACTIVE_BOOKMARK_KEY', null);
@@ -211,6 +221,7 @@ if (Meteor.isClient) {
 				var currentBookmark = bookmarksDB.findOne(currentBookmarkKey);
 				if (currentBookmark.clip == this._id){
 					Session.set('ACTIVE_BOOKMARK_KEY', currentBookmarkKey);
+					$( "#" + currentBookmarkKey + ">.active-menu-item-text" ).slideToggle(400);
 				}
 			}
 		}
@@ -219,14 +230,14 @@ if (Meteor.isClient) {
 
 	Template.menuBookmarks.events({
 		'mouseenter .bookmark': function(event){
-			$('#' + this._id + ' div span').css( "visibility", "visible");
+			$('#' + this._id + ' div .music-play-item-icon').css( "visibility", "visible");
 		},
 
 		'mouseleave .bookmark': function(event){ 
-			$('#' + this._id + ' div span').css( "visibility", "hidden");
+			$('#' + this._id + ' div .music-play-item-icon').css( "visibility", "hidden");
 		},
-
-		'click .music-item-play-icon': function(event){
+		
+		'click .music-play-item-icon': function(event){
 			Session.set('CURRENT_BOOKMARK_KEY', this._id);
 			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
 			var currentBookmarkData = bookmarksDB.findOne(currentBookmarkKey);
@@ -281,6 +292,7 @@ if (Meteor.isClient) {
 			}else{
 				Session.set('ACTIVE_BOOKMARK_KEY', this._id);
 				var selectedBookmarkKey = Session.get('ACTIVE_BOOKMARK_KEY');
+				$( "#" + this._id + ">.active-menu-item-text" ).slideToggle(400);
 				MixTape.setCurrentBookmark(selectedBookmarkKey);
 			}
 

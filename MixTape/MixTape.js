@@ -8,9 +8,9 @@ hi = function(){
 
 
 if (Meteor.isServer) {
-  Meteor.publish('playlistsDB', function(){
-    return playlistsDB.find({}); // publish the posts collection
-  });
+  // Meteor.publish('playlistsDB', function(){
+  //   return playlistsDB.find({}); // publish the posts collection
+  // });
 
   Meteor.startup(function() {
 
