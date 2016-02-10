@@ -15,11 +15,74 @@ body{
 	border-radius: 4px;
 }
 
-.music-section-header > a > span{
+.music-section-header{
+	padding-left: 12px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	padding-right:5px;
+	background-color: rgb(16, 16, 16);
+	color: rgb(177, 177, 177);
+	border-radius: 4px;
+	font-weight: 610;
+	font-size: 1.1em;
+}
+
+.music-section-header:hover{
+	color:white;
+	cursor: default;
+}
+
+.menu-header-dropdown{
+	background-color: rgb(33,34,39);
+	right: -42px;
+	left:auto;
+	padding-bottom: 0px;
+	padding-top: 0px;
+
+}
+
+.menu-header-dropdown>li>a{
+	color: rgb(177, 177, 177);
+	padding-bottom: 12px;
+	padding-top: 12px;
+}
+
+.menu-header-dropdown>li>a:hover{
+	color: white;
+	background-color: rgb(13,14,19);
+	border-radius: 4px;
+}
+
+.dropdown-menu:before {
+  position: absolute;
+  top: -7px;
+  left: auto;
+  right: 53px;
+  display: inline-block;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid rgb(33,34,39);
+  border-left: 7px solid transparent;
+  border-bottom-color: rgba(33,34,39 0.2);
+  content: '';
+}
+
+/*.dropdown-menu:after {
+  position: absolute;
+  top: -6px;
+  left: auto;
+  right: 53px;
+  display: inline-block;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgb(33,34,39);
+  border-left: 6px solid transparent;
+  content: '';
+}*/
+
+/*.music-section-header > a > span{
 	margin-right:5px; 
 	padding-left: 7px; 
 	padding-right: 7px;
-}
+}*/
 
 .small_pill{
 	width: 200px;
@@ -34,6 +97,15 @@ body{
 	height: 150px;
 	background-color: #B8B8B8;
 	position: relative;
+}
+
+.menu-options-icon{
+	float: right;
+	padding: 5px;
+}
+
+.menu-options-icon:hover{
+	cursor: pointer; cursor: hand;
 }
 
 .music-play-item-icon{
@@ -138,19 +210,21 @@ body{
 .list-group-item > div{
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 
 
 .list-group-item {
 	position: relative;
-}
-
-
-.list-group-item {
 	border-left: 0px solid rgb(221, 221, 221);
 	border-right: 0px solid rgb(221, 221, 221);
 }
+/*.list-group-item-heading{
+	height: 28px;
+	display: table-cell;
+	vertical-align: middle;
+}*/
 
 .list-group-item:hover{
 	background-color: #EEEEEE;
@@ -183,7 +257,6 @@ body{
 	font-family: inherit;
     font-weight: 500;
     line-height: 1.1;
-    display: block;
 }
 
 

@@ -2,17 +2,30 @@
   <div class='col-md-7'>
     <div id="clips" class="music-section">
       <ul class="nav nav-pills nav-stacked">
-        <li class="music-section-header active" onclick="MixTape.editPlaylist();">
+        <li class="music-section-header dropdown" >      
+            <div>
+              <span class="glyphicon glyphicon-play music-play-item-icon" style="visibility: hidden;"></span>
+              Tracks
+              <a class="dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-option-vertical menu-options-icon"></span>
+              </a>
+              <ul class="dropdown-menu menu-header-dropdown" role="menu" aria-labelledby="menu1">
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><span class="glyphicon glyphicon-plus" style="margin-right: 5px;"></span>Add</a></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Edit</a></li>
+              </ul>
+            </div>
+        </li>
+        <!-- <li class="music-section-header active" onclick="MixTape.editPlaylist();">
           <a href="#">
             <span class="glyphicon glyphicon-plus"></span>Tracks</a>
-          </li>
+          </li> -->
 
           <div id='clipItems'>
             {{#each clip}}
               <li class="list-group-item clip {{activeClass}}" id={{_id}}>
                 <span class="glyphicon glyphicon-edit edit-item-icon" style="visibility:{{showEditIcon}};"></span>
                 <div class="list-group-item-heading {{activeHeadingClass}}"><span class="glyphicon glyphicon-play music-play-item-icon" style="visibility: hidden;"></span>{{name}}</div>
-                <p class="list-group-item-text active-menu-item-text" style="display:{{showMenu}};">Notes: {{notes}}</p>
+                <p class="list-group-item-text active-menu-item-text" style="display:{{showMenu}};">{{notes}}</p>
               </li>
             {{/each}}
           </div>

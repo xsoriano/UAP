@@ -117,13 +117,7 @@ if (Meteor.isClient) {
 
 	//Once the Template is rendered, run this function which
 	//  sets up JQuery UI's sortable functionality
-	Template.menuPlaylists.rendered = function() {
-		this.$('#playlistItems').sortable({
-			stop: function(e, ui) {
-	  			reorderMenus(ui, playlistsDB)
-			}
-		});
-	}
+
 
 	Template.menuClips.rendered = function() {
 		this.$('#clipItems').sortable({

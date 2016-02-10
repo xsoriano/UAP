@@ -2,16 +2,31 @@
   <div class='col-md-2 left'>
 
     <div id='playlists' class="music-section">
+
       <ul class="nav nav-pills nav-stacked">
-        <li class="music-section-header" onClick="MixTape.newPlaylist();"><a href="#">
-          <span class="glyphicon glyphicon-plus"></span>Playlists</a>
+         <!--  -->
+        <li class="music-section-header dropdown" >      
+            <div>
+              <span class="glyphicon glyphicon-play music-play-item-icon" style="visibility: hidden;"></span>
+              Playlists
+              <a class="dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-option-vertical menu-options-icon"></span>
+              </a>
+              <ul class="dropdown-menu menu-header-dropdown" role="menu" aria-labelledby="menu1">
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onClick="MixTape.newPlaylist();"><span class="glyphicon glyphicon-plus" style="margin-right: 5px;"></span>Add</a></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onClick="MixTape.editPlaylist();"><span class="glyphicon glyphicon-edit" style="margin-right: 5px;"></span>Edit</a></li>
+              </ul>
+            </div>
         </li>
+
+        <!-- <li class="music-section-header dropdown"><a href="#" >
+          Playlists<span class="glyphicon glyphicon-option-vertical"></span></a>
+        </li> -->
         <div id='playlistItems'>
         {{#each playlist}}
 
           <li class="list-group-item playlist {{activeClass}}" id={{_id}}>
-            <span class="glyphicon glyphicon-edit edit-item-icon" style="visibility:{{showEditIcon}};"></span>
-            <div class="list-group-item-heading {{activeHeadingClass}}"><span class="glyphicon glyphicon-play music-play-item-icon" style="visibility: hidden;"></span>{{name}}</div>
+            <div class="list-group-item-heading {{activeHeadingClass}}"><span class="glyphicon glyphicon-play music-play-item-icon" style="visibility: hidden;"></span><span>{{name}}</span></div>
             <p class="list-group-item-text active-menu-item-text" style="display:{{showMenu}};">{{notes}}</p>
           </li>
           {{/each}}
@@ -20,4 +35,9 @@
     </div>
   </div>
 
+<script>
+$(document).ready(function(){
+    $(".dropdown-toggle").dropdown();
+});
+</script>
 </template>

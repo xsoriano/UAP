@@ -19,10 +19,7 @@ form label.error{
     visibility: hidden;
 }
 
-.preClip-item>.handle:hover{
-	color: black;
-	cursor: pointer; cursor: move;
-}
+
 
 .preClip-item>.remove:hover{
 	color: black;
@@ -35,4 +32,17 @@ form label.error{
 
 select.error, textarea.error{
     background-color:rgb(255, 231, 231) !important;
+}
+
+.ep-playlist>.handle {
+    float: left;
+    color: rgb(157, 157, 157);
+    visibility: hidden;
+    padding-right: 7px;
+    padding-left: 7px;
+}
+
+.handle:hover{
+	color: black;
+	cursor: pointer; cursor: move;
 }
