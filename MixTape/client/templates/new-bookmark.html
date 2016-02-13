@@ -30,7 +30,7 @@
             <select name="clip" class="form-control" id="new-bookmark-clip">
               <option value=""></option>
               {{#each clip}}
-                <option value={{_id}} selected="{{isClipSelected}}">{{name}}</option>
+                <option value={{_id}} selected="{{isClipSelected}}">{{name}} ({{duration}})</option>
               {{/each}}
             </select>
           </div>

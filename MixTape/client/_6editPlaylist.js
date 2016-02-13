@@ -28,11 +28,11 @@ Template.editPlaylist.helpers({
 
 Template.editPlaylist.events({
 	'mouseenter .ep-playlist': function(event){
-		$('#' + this._id + ' .handle').css( "visibility", "visible");
+		$(event.target).find('.handle').css( "visibility", "visible");
 	},
 
 	'mouseleave .ep-playlist': function(event){ 
-		$('#' + this._id + ' .handle').css( "visibility", "hidden");
+		$(event.target).find('.handle').css( "visibility", "hidden");
 	},
 
 	'click .ep-playlist': function(event){
@@ -43,6 +43,10 @@ Template.editPlaylist.events({
 
 	'click #delete-playlist-btn': function(event){
 		deletePlaylist();
+	},
+
+	'click .ep-close': function(event){
+		clearEditingPlaylist();
 	},
 
 	'submit form': function(event){
@@ -67,7 +71,7 @@ Template.editPlaylist.onRendered(function() {
         },
         messages: {
         	name: {
-                required: "You must enter an playlist name."
+                required: "You must enter a playlist name."
             },
         },
         submitHandler: function(event){
@@ -154,6 +158,7 @@ function deletePlaylist(){
 				playlistsDB.remove(toDeletePlaylistKey);
 				clearEditingPlaylist();
 			}	
+			$('#editPlaylistWindow').modal('show');
 		},
 	});
 }
@@ -257,3 +262,12 @@ MixTape.closeEditModal = function(){
 		container.firstChild.remove();
 	}
 }
+
+$(document).ready(function() {
+	$(document).on('hidden.bs.modal', function (e) {
+      	if($('.modal.in').length>0){
+        	$('body').addClass('modal-open');
+      	}
+     
+    });
+});

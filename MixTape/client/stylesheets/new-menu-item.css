@@ -34,7 +34,7 @@ select.error, textarea.error{
     background-color:rgb(255, 231, 231) !important;
 }
 
-.ep-playlist>.handle {
+.ep-playlist>.handle, .ec-clip>.handle, .eb-bookmark>.handle {
     float: left;
     color: rgb(157, 157, 157);
     visibility: hidden;

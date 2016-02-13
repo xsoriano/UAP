@@ -53,18 +53,18 @@ Template.newBookmark.helpers({
 		var currentPlaylist = Session.get('SELECTED_NB_PLAYLIST_KEY');
 		return clipsDB.find({playlist:currentPlaylist},{sort: {rank: 1}});
 	},
+	'duration': function(){
+		var durationSecs = this.duration;
+		var mins = Math.floor(durationSecs/60);
+		var secs = Math.floor(durationSecs)%60;
+		var optZero = (secs < 10) ? '0' : '';
+		var duration = mins + ':' + optZero + secs;
+		return duration;		
+	},
 	'isClipSelected': function(){
 		return Session.equals('SELECTED_NB_CLIP_KEY', this._id) && 'selected';
 
 	},
-
-	// 'selectedClip': function(){
-	// 	return Session.equals('SELECTED_NB_CLIP_KEY', this._id) && 'selected';
-	// },
-
-	// 'inputTimeDisabled': function(){
-	// 	return !Session.equals('START_TIME_ENTERED',true);
-	// },
 
 	});
 

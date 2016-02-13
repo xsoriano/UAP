@@ -22,11 +22,7 @@ if (Meteor.isClient) {
 			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'block';
 
 		},
-		'showEditIcon': function(){
 
-			return Session.equals('ACTIVE_PLAYLIST_KEY', this._id) && 'visible';
-
-		}
 	});
 
 	Template.menuClips.helpers({
@@ -50,9 +46,6 @@ if (Meteor.isClient) {
 			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'block';
 		},
 
-		'showEditIcon': function(){
-			return Session.equals('ACTIVE_CLIP_KEY', this._id) && 'visible';
-		}
 	});
 
 	Template.menuBookmarks.helpers({
@@ -80,9 +73,7 @@ if (Meteor.isClient) {
 
 			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'block';
 		},
-		'showEditIcon': function(){
-			return Session.equals('ACTIVE_BOOKMARK_KEY', this._id) && 'visible';
-		}
+
 	});
 
 	reorderMenus = function(ui, collection){
@@ -115,17 +106,7 @@ if (Meteor.isClient) {
 		}
 	}
 
-	//Once the Template is rendered, run this function which
-	//  sets up JQuery UI's sortable functionality
 
-
-	Template.menuClips.rendered = function() {
-		this.$('#clipItems').sortable({
-			stop: function(e, ui) {
-	  			reorderMenus(ui, clipsDB)
-			}
-		});
-	}
 
 	Template.menuBookmarks.rendered = function() {
 		this.$('#bookmarkItems').sortable({
@@ -261,16 +242,9 @@ if (Meteor.isClient) {
 				}
 
 			}
-
-			
-			//else the event will propagate and activate the menu item
-			console.log('WILL PROPAGATEEEEEEEEEEEEEE');
-
-			
 		},
 
 		'click .bookmark': function(event){
-			console.log('PROPAGATEEEEEEEEEEEEEEEEEEEED');
 			if(Session.equals('ACTIVE_BOOKMARK_KEY', this._id)){
 				Session.set('ACTIVE_BOOKMARK_KEY', null);
 				var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');

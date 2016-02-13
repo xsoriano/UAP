@@ -1,0 +1,87 @@
+<template name="newClip">
+  <!-- NewPlaylist modal -->
+  <div id="newClipWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header" style="padding-bottom:20px;">
+          <button id="nc-top-btn-close" type="button" class="close nc-close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Add Clip</h4>
+        </div>
+
+        <div class="modal-body">
+          <form role="form" id="nc-add-clip-form">
+            {{#if waitForNewCLip}}
+              {{> spinner}}                          
+            {{/if}} 
+            <div class="form-group">
+              <label for="name">Name:</label>
+              <input name="name" type="text" class="form-control" id="nc-name" onClick='this.select()' required>
+            </div>
+
+            <div class="form-group">
+              <label for="playlist">Playlist:</label>
+              <select name="playlist" class="form-control" id="nc-playlist">
+                <option value=""></option>
+                {{#each playlist}}
+                <option value={{_id}} selected="{{isPlaylistSelected}}">{{name}} </option>
+                {{/each}}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="url">URL:</label>
+              <input name="url" type="url" class="form-control"  id='nc-url' onClick='this.select()' required>
+            </div>
+
+            <div class="form-group">
+              <label for="notes">Notes:</label>
+              <textarea name="notes" rows="5" class="form-control" id='nc-notes' onClick='this.select()'></textarea>
+            </div> 
+          </form>
+        </div>
+        <audio id="nc-audio">
+            <source src="" id="nc-source">
+        </audio>
+
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default nc-close" data-dismiss="modal">Cancel</button>
+          <input type="submit" class="btn btn-primary" value="Save" form="nc-add-clip-form"> 
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

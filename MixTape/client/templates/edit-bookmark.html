@@ -1,0 +1,119 @@
+<template name="editBookmark">
+  <div id="editBookmarkWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" style="padding-bottom:20px;">
+          <button id="eb-top-btn-close" type="button" class="close eb-close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Edit Bookmarks</h4>
+        </div>
+
+        <div class="modal-body">
+          <div class="container-fluid">  
+            <div class="row">
+
+              <div class="col-md-5 ">
+              <div class="form-group">
+                  <label for="playlist">Playlist:</label>
+                  <select name="playlist" class="form-control" id="eb-show-playlist">
+                    <option value=""></option>
+                    {{#each playlist}}
+                      <option value={{_id}} selected="{{isPlaylistSelected}}">{{name}} </option>
+                    {{/each}}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="clip">Clip:</label>
+                  <select name="clip" class="form-control" id="eb-show-clip">
+                    <option value=""></option>
+                    {{#each clip}}
+                      <option value={{_id}} selected="{{isClipSelected}}">{{name}} ({{duration}})</option>
+                    {{/each}}
+                  </select>
+                </div>
+              <div class="panel panel-default" id="eb-existingBookmarks" style="padding:0px;">
+                <div class="panel-heading" width="100%">
+                  <h3 class="panel-title">Bookmarks</h3>
+                </div>
+                <!-- <div class="panel panel-default panel-body"> </div> -->
+                <!-- List group -->
+                
+                <ul id="eb-added-container" class="list-group" style="min-height:42px;">
+                  <div id="existingBookmarks">
+                    {{#each bookmark}}
+                        <li class="list-group-item btn btn-default eb-bookmark {{activeClass}}"><span class="handle glyphicon glyphicon-sort" style="visibility:hidden;"></span>
+                          {{name}}
+                        </li>
+                    {{/each}} 
+                  </div>
+                </ul>
+              </div>
+              </div>
+                
+              <div class="col-md-1">
+                <!--blank space-->
+              </div>
+
+              <div class="col-md-6 panel panel-default" id="eb-editing" role="tabpanel">
+                  <div class="panel-body">          
+                    <form id="edit-bookmark-form">
+                      <div class="form-group">
+                          <label for="name">Name:</label>
+                          <input name="name" type="text" class="form-control" id="eb-name" onclick="this.select()">
+                      </div>
+                      <div class="panel panel-default form-inline">
+                        <div class="panel-body">
+                          <div class="row" style="margin-left:0px; margin-right:0px">
+                                  <div class="col-md-6 form-group" style="margin-bottom:15px;">
+                                    <label for="eb-start">Start Time:</label>
+                                    <input name="start" type="text" class="form-control" id="eb-start" placeholder="mm:ss">
+                                  </div>
+
+                                  <div class="col-md-6 form-group">
+                                    <label for="eb-end">End Time:</label>
+                                    <input name="end" type="text" class="form-control" id="eb-end" placeholder="mm:ss">
+                                  </div>
+                          </div>
+                          <div class="row" style="margin-left:0px; margin-right:0px">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-6 form-group">
+                                  <label for="eb-duration">Duration:</label>
+                                  <input name="duration" type="text" class="form-control" id="eb-duration" placeholder="In seconds">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                          <label for="notes">Bookmark Notes:</label>
+                          <textarea name="notes" rows="5" id="eb-notes" class="form-control" onClick='this.select()'></textarea>
+                      </div>
+                      <button type="button" class="btn btn-danger {{disabledClass}}" id="delete-bookmark-btn" disabled='{{disabledClass}}'>Delete Bookmark</button>
+                      <input type="submit" class="btn btn-default {{disabledClass}}" value="Save Changes" disabled='{{disabledClass}}' style="float:right;"> 
+                    </form>
+                    <!-- Nav tabs -->
+                    
+
+
+                  </div>
+
+                </div>
+              
+              
+
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default eb-close" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>

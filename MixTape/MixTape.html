@@ -9,134 +9,17 @@
 
     <div id='music-container' class='container'>
       {{> menuPlaylists}}
-  <!--     <div class='col-md-2 left'>
+      {{> menuClips}}
+      {{> menuBookmarks}}
+    </div>  
 
-  <div id='playlists' class="music-section">
-  <ul class="nav nav-pills nav-stacked">
-  <li class="music-section-header" onClick="MixTape.newPlaylist();"><a href="#">
-  <span class="glyphicon glyphicon-plus"></span>Playlists</a>
-  </li>
-
-  <ul class="list-group" role="menu" aria-labelledby="dropdownMenu">
-  </ul>
-  </ul>
-  </div>
-</div> -->
-{{> menuClips}}
-{{> menuBookmarks}}
+    {{> newPlaylist}}
+    {{> editPlaylist}}
+    {{> newClip}}
+    {{> editClip}}
+    {{> newBookmark}}
+    {{> editBookmark}}
 
 
 
-
-
-
-<!-- <div class='col-md-6' id='music-clip-column'>
-  <div class='noselect' id='music-clip-window'>
-    <ul class="nav nav-pills nav-stacked">
-      <li class="active indigo"><a>Editing Window</a></li>
-      <div class="music_controls">
-        <div class="bookmark_background" id="bookmark_background_id">
-          <button type="button" class= "btn btn-info btn-lg" id="btnBookmark">Add Bookmark</button>
-          <input id="inputStartTime" type="text" placeholder="Start Time"/> 
-          <input id="inputEndTime" type="text" placeholder="End TIme"/>
-        </div>
-
-      </div>
-
-    </ul>
-  </div>
-</div> -->
-  </div>  
-
-{{> newPlaylist}}
-{{> editPlaylist}}
-{{> newBookmark}}
-
-
-<!-- EditPlaylist modal -->
-<div id="editPlaylistWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        Edit <span id='current-playlist-name'>Current Playlist Name</span>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick='MixTape.closeEditModal();'>
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <form>
-          <input placeholder="Edit Playlist Name" type="text" class="form-control" id="edit-playlist-name" onclick="this.select()">
-        </form>
-
-      </div>
-
-      <div class="modal-body">
-        <div class="container-fluid">
-          <div class="row"><h5 class="modal-title" id="ep-name">Add/Remove music from this playlist</h5></div>
-          <div class = "row">
-            <div class="col-md-6 panel panel-default" id="ep-clipSource" role="tabpanel">
-              <div class="panel-body">
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs" role="tablist">
-                  <li role="presentation" class="active"><a href="#ep-computerTab" role="tab" data-toggle="tab">From your Computer</a></li>
-                  <li role="presentation"><a href="#ep-urlTab" role="tab" data-toggle="tab">Paste a URL</a></li>
-                </ul>
-
-                <!-- Tab panes -->
-                <div class="tab-content">
-                  <div role="tabpanel" class="tab-pane active" id="ep-computerTab">
-                    <div class="panel panel-default panel-body" id='ep-computer-container'>computer </div>        
-                    <ul></ul>                    
-                  </div>
-                  <div role="tabpanel" class="tab-pane" id="ep-urlTab">
-                    <div class="panel panel-default panel-body" id='ep-url-container'>     
-                      <form role="form">
-                        <div class="form-group">
-                          <label for="name">Name:</label>
-                          <input type="text" class="form-control" id="src-name" onClick='this.select()'>
-                        </div>
-                        <div class="form-group">
-                          <label for="url">URL:</label>
-                          <input name="url" type="text" class="form-control"  id='src-url' onClick='this.select()'>
-                        </div>
-                        <button class="btn btn-default" onclick="MixTape.addURLClip()">Add</button>
-                      </form>
-                    </div>                            
-
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="col-md-1" >
-              <!--blank space-->
-            </div>
-
-
-            <div class="col-md-5 panel panel-default" id="np-addedClips">
-              <div class="panel-heading">
-                <h3 class="panel-title">Current Clips</h3>
-                <div class="panel panel-default panel-body">                                
-                  <ul id='ep-added-container' class='list-group'></ul>     
-                </div>
-              </div>               
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" onClick='MixTape.closeEditModal();'>Cancel</button>
-        <button type="button" class="btn btn-primary" id="ep-saveButton" onClick='MixTape.saveEdit();'>Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-</body>
-
-<template name="hello">
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
-</template>
+  </body>

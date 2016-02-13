@@ -1,0 +1,112 @@
+<template name="editClip">
+  <div id="editClipWindow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" style="padding-bottom:20px;">
+          <button id="ec-top-btn-close" type="button" class="close ec-close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Edit Clips</h4>
+        </div>
+
+        <div class="modal-body">
+          <div class="container-fluid">  
+            <div class="row">
+              <div class="col-md-5">
+                
+              </div>
+              <div class="col-md-7">
+              </div>
+            </div>
+
+<!--             <div class="row"><h5 class="modal-title" id="np-name">Add music to this playlist</h5></div> -->
+            <div class="row">
+
+              <div class="col-md-5">
+              <div class="form-group">
+                  <label for="playlist">Playlist:</label>
+                  <select name="playlist" class="form-control" id="show-playlist">
+                    <option value=""></option>
+                    {{#each playlist}}
+                      <option value={{_id}} selected="{{isShowPlaylistSelected}}">{{name}} </option>
+                    {{/each}}
+                  </select>
+                </div>
+              <div class="panel panel-default" id="ec-existingClips" style="padding:0px;">
+                <div class="panel-heading" width="100%">
+                  <h3 class="panel-title">Clips</h3>
+                </div>
+                <!-- <div class="panel panel-default panel-body"> </div> -->
+                <!-- List group -->
+                
+                <ul id="ec-added-container" class="list-group" style="min-height:42px;">
+                  <div id="existingClips">
+                    {{#each clip}}
+                        <li class="list-group-item btn btn-default ec-clip {{activeClass}}"><span class="handle glyphicon glyphicon-sort" style="visibility:hidden;"></span>
+                          {{name}}
+                        </li>
+                    {{/each}} 
+                  </div>
+                </ul>
+              </div>
+              </div>
+                
+              <div class="col-md-1">
+                <!--blank space-->
+              </div>
+
+              <div class="col-md-6 panel panel-default" id="ec-editing" role="tabpanel">
+                  <div class="panel-body">
+                    {{#if checkingClipSource}}
+                      {{> spinner}}                          
+                    {{/if}}           
+                    <form id="edit-clip-form">
+                      <div class="form-group">
+                          <label for="name">Name:</label>
+                          <input name="name" type="text" class="form-control" id="ec-name" onclick="this.select()">
+                      </div>
+                      <div class="form-group">
+                        <label for="playlist">Playlist:</label>
+                        <select name="playlist" class="form-control" id="ec-playlist">
+                          <option value=""></option>
+                          {{#each playlist}}
+                            <option value={{_id}} selected="{{isPlaylistSelected}}">{{name}} </option>
+                          {{/each}}
+                        </select>
+                      </div>
+                      <div class="form-group">
+                          <label for="url">URL:</label>
+                          <input name="url" type="url" class="form-control" id="ec-url" onclick="this.select()">
+                      </div>
+                      <div class="form-group">
+                          <label for="notes">Clip Notes:</label>
+                          <textarea name="notes" rows="5" id="ec-notes" class="form-control" onClick='this.select()'></textarea>
+                      </div>
+                      <audio id="ec-audio">
+                          <source src="" id="ec-source">
+                      </audio>
+                      <button type="button" class="btn btn-danger {{disabledClass}}" id="delete-clip-btn" disabled='{{disabledClass}}'>Delete Clip</button>
+                      <input type="submit" class="btn btn-default {{disabledClass}}" value="Save Changes" disabled='{{disabledClass}}' style="float:right;"> 
+                    </form>
+                    <!-- Nav tabs -->
+                    
+
+
+                  </div>
+
+                </div>
+              
+              
+
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default ec-close" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>
