@@ -1,60 +1,60 @@
-playlistMenu = null; // these are the menu containers
-clipMenu = null;
-bookmarkMenu = null;
-
-// currentPlaylist = null; // these are the current item/object
-// currentClip = null;
-// currentBookmark = null;
-
-currentPlaylistIndex = null;
-currentBookmarkIndex = null;
-currentClipIndex = null;
-playlists = []; // this will hold all the created playlists
-
 dragging_thumb = false;
-
-playing_clip = false;
 interval_function = null;
 clip_time_length_ms = null;
 clip_time_played_ms = null; //Time of the currently selected clip, in milliseconds.
-
-selected_bookmark_identifier = null;
-selectedPlaylist = null;
 bookmark_time_start = null;
 bookmark_time_end = null;
-
-
-
 waitForMetadata = false;
 checkBuffering = null;
 checkMetadata = null;
-//End change by Xavier
 playingClip = null;
 
+
 $(document).ready(function() {
-    //Gabriel Modifications. START
+    $('#heb-switch').bootstrapSwitch();
+    $('#heb-switch').on('switchChange.bootstrapSwitch', function(event, state) {
+	  if(state){
+			$('#heb-container > .glyphicon').css('color','#31b0d5');
+			bootbox.alert({
+				title: "Fast Bookmarking Mode",
+				
+				message: "You are going into Fast Bookmarking Mode. When on this mode, you can rapidily mark interesting parts of a playing clip by hitting the key 'b' while listening. Happy Bookmarking!", 
+
+				buttons: {
+			        ok: {
+			            label: 'Ok',
+			            className: 'btn-default'
+			        }
+		    	},
+
+				callback: enterHEB(),
+			
+			});
+		}else{
+			$('#heb-container > .glyphicon').css('color','gray');
+			exitHEB();
+		}
+		$('#heb-container > .bootstrap-switch').tooltip('hide');
+		$(this).blur();
+	});
+	$('#heb-container > .bootstrap-switch').tooltip({title: "Fast Bookmarking Mode", delay: {show: 500, hide: 75}, placement: "bottom"}); 
+
+
     var music_clip_window = document.getElementById('music-clip-window');
     var progress_bar = document.getElementById('progress_bar_id');
     var track = document.getElementById('track_id');
     var progress_thumb = document.getElementById('progress_thumb_id');
     $('#progress_thumb_id').draggable({
-    helper: function() {
-        clearInterval(interval_function);
-        return $(this);
+	    helper: function() {
+	        clearInterval(interval_function);
+	        return $(this);
 
-    }, 
+	    }, 
 
-    containment: "#track_id",
-    axis : "x"
+	    containment: "#track_id",
+	    axis : "x"
 
 	});
-    // var bookmark_btn = document.getElementById('btnBookmark');
-    // var input_start_time = document.getElementById('inputStartTime');
-    // var input_end_time = document.getElementById('inputEndTime');
-
-    // input_start_time.addEventListener("focus", MixTape.clearHelpText);
-    // input_end_time.addEventListener("focus", MixTape.clearHelpText);
-    // bookmark_btn.addEventListener('click', MixTape.addNewBookmark);
 
     progress_thumb.addEventListener('mousedown', MixTape.startDragging);
     progress_thumb.addEventListener('mousemove', MixTape.hoverTrack);
@@ -76,7 +76,7 @@ $(document).ready(function() {
     var clip = document.getElementById('current-clip');
     clip.loop = false;
     
-    clip.addEventListener('loadedmetadata', function() {
+    clip.addEventListener('canplay', function() {
     	console.log('loaded meta data!');
     	var currentClipKey = Session.get('CURRENT_CLIP_KEY');
 
@@ -87,43 +87,13 @@ $(document).ready(function() {
     	var seconds = Math.floor(clip_time_length_ms/1000)%60;
 
     	// no time value shows if no clip available
-    	if (!currentClipKey){
-    		$(".time_length").html("");
-    		$(".time_passed").html("");
-    	} else {
-    		if(seconds < 10){
-    			$(".time_length").html(""+minutes+":0"+seconds);
-    		}else{
-    			$(".time_length").html(""+minutes+":"+seconds);
-    		}
-    		$(".time_passed").html("0:00");
-    	}
+    	
 
     	if (waitForMetadata){
     		waitForMetadata = false
     	}
 
     	var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
-    	// if (currentBookmarkKey){
-    	// 	console.log(currentClipKey);
-    	// 	console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    	// 	var currentBookmark = bookmarksDB.find({_id:currentBookmarkKey}).fetch()[0];
-    	// 	var bookmarkClip = currentBookmark.clip;
-    	// 	console.log(currentClip == bookmarkClip);
-    	// 	console.log(currentClip == bookmarkClip);
-
-    	// 	if(currentClip != bookmarkClip){
-    	// 		MixTape.setCurrentBookmark();
-    	// 	}else{
-    	// 		MixTape.setCurrentBookmark(currentBookmarkKey);
-    	// 	}
-    	// } else{
-    	// 	console.log("11$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    	// 	MixTape.adjustBookmarkMarkers();
-    	// 	MixTape.resetProgressElements();
-    	// }	
-
-    	//isLoadingMetadata = false;
 
     });
 	//Gabriel Modifications. END
@@ -139,104 +109,61 @@ $(document).ready(function() {
 	
 });
 
+
+function enterHEB(){
+	$(document).keypress(function(e) {
+	  console.log( e.which );
+	  if (e.which = 98){ 	
+	  	if(isPlaying()){
+	  		createNewBookmarkHEB();
+	  		console.log("Create a bookmark")
+	  	}
+	  }
+	});
+}
+
+function exitHEB(){
+	$(document).off("keypress");
+}
+
+function createNewBookmarkHEB(){
+	var parentClip = Session.get('CURRENT_CLIP_KEY');
+	var bookmarkRank = (bookmarksDB.find({owner: Meteor.userId(), clip: parentClip}).count()>0) ? bookmarksDB.findOne({clip: parentClip}, {sort: {rank: -1}}).rank + 0.05 : 0;
+	var startTimeMils = $('#current-clip')[0].currentTime*1000;
+	var endTimeMils = $('#current-clip')[0].duration*1000;
+	var bookmarkName = 'Bookmark'+$('#current-clip')[0].currentTime+'s';
+	if (bookmarksDB.find({name:bookmarkName}).count() > 0) bookmarkName = bookmarkName + ' (1)';
+	bookmarksDB.insert({
+		owner : Meteor.userId(),
+		name : bookmarkName,
+		clip: parentClip,
+		rank : bookmarkRank,
+		startTime: startTimeMils,
+		endTime: endTimeMils,
+		notes: '',
+	});
+}
+
+function isPlaying() { 
+	return !$('#current-clip')[0].paused; 
+}
 //Change by Xavier
 MixTape.focusBookmarkTextbox= function(){
 	$("#inputStartTime").focus();
-}
-
-//Gabriel Modification. START
-
-//Author: Gabrielj. Adds bookmarks to bookmark list
-MixTape.addNewBookmark= function(e){
-	if(currentSrc != null){
-		var start_time = $(inputStartTime).val();
-		var end_time = $(inputEndTime).val();
-		var array_start_time = start_time.split(":");
-		var array_end_time = end_time.split(":");
-		console.log(array_end_time[0]);
-		console.log(array_end_time[1]);
-		if (array_end_time == "" & array_start_time == ""){
-			var clip_time_length_ms = Session.get('clip_duration');
-			var clip = document.getElementById('current-clip');
-			console.log(clip);
-			start_time = clip.currentTime*1000; //In milliseconds
-			end_time = clip_time_length_ms; //In milliseconds
-			var minutes = Math.floor(clip_time_played_ms/(60*1000));
-			var seconds = Math.floor(clip_time_played_ms/1000)%60;
-			var bookmark_name = 'Bookmark ' + (playingClip.bookmarks.length+1) + ' '+minutes+'m'+seconds+'s';
-			var new_bookmark = new Bookmark().init_new(bookmark_name, currentClip, start_time, end_time);
-			// This is not needed anymore, because bookmarks in the DB know who their clip is.
-			// playingClip.addBookmark(new_bookmark);
-			for(var i = 0; i < playlists.length; i++){
-				if(playingClip.playlist.id == playlists[i].id){
-					MixTape.setCurrentPlaylist(i);
-				}
-			}
-			var playingClipSiblings = playingClip.siblings();
-			for(var i = 0; i < playingClipSiblings.length; i++){
-				console.log(playingClipSiblings[i].id());
-				console.log(playingClip.id);
-				if(playingClip.id == playingClipSiblings[i].id()){
-					MixTape.setCurrentClip(i);
-				}
-			}
-			MixTape.updateMenus();
-		} else if(array_start_time.length != 2 || array_end_time.length != 2 
-			|| isNaN(parseInt(array_start_time[0])) || isNaN(parseInt(array_start_time[1])) 
-			|| isNaN(parseInt(array_end_time[0])) || isNaN(parseInt(array_end_time[1])) 
-			|| parseInt(array_start_time[1])>60 ||  parseInt(array_end_time[1])>60
-			|| parseInt(array_start_time[1])<0 ||  parseInt(array_end_time[1])<0 ){
-			$(inputStartTime).val("Format 'mm:ss'");
-			$(inputEndTime).val("Format 'mm:ss'");
-		} else {
-			start_time = parseInt(array_start_time[0])*60*1000 + parseInt(array_start_time[1])*1000; //In milliseconds
-			end_time = parseInt(array_end_time[0])*60*1000 + parseInt(array_end_time[1])*1000; //In milliseconds
-			//console.log(start_time);
-			//console.log(end_time);
-			if(start_time >= 0 && start_time < clip_time_length_ms){
-				if(end_time > start_time && end_time < clip_time_length_ms){
-					var bookmark_name = ('Bookmark ' + (playingClip.bookmarks.length+1)+' '+array_start_time[0]+'m'+array_start_time[1]
-						+'s to ' + array_end_time[0]+'m'+array_end_time[1]+'s');
-					var new_bookmark = new Bookmark().init_name_times(bookmark_name, start_time, end_time);
-
-					playingClip.addBookmark(new_bookmark);
-					for(var i = 0; i < playlists.length; i++){
-						if(playingClip.playlist.id == playlists[i].id){
-							MixTape.setCurrentPlaylist(i);
-						}
-					}
-					for(var i = 0; i < playingClip.playlist.clips.length; i++){
-						if(playingClip.id == playingClip.playlist.clips[i].id){
-							MixTape.setCurrentClip(i);
-						}
-					}
-					MixTape.updateMenus();
-					document.getElementById('inputStartTime').value = '';
-        			document.getElementById('inputEndTime').value = '';
-					console.log("Done adding");
-				}
-			}
-		}
-	}
-	else{
-		$(inputStartTime).val("Double click clip!");
-		$(inputEndTime).val("Double click clip!");
-	}
 }
 
 MixTape.setCurrentClipPlayer = function(currentClipKey, currentBookmarkKey){
 	var clipData = clipsDB.findOne(currentClipKey);
 	var clipSource = clipData.source;
 	var clipName = clipData.name;
-	var clipStart = clipData.startTime;
-	var clipEnd = clipData.endTime;
+	var clipDuration = clipData.duration;
 
 	if (!currentClipKey){
 		document.getElementById('current-clip').src = null;
 	} else {
 		console.log()
 		document.getElementById('current-clip').src = clipSource;
-		MixTape.updateUIForNewClip(clipName, clipStart, clipEnd);
+		MixTape.updateUIForNewClip(clipName, clipDuration);
 		waitForMetadata = true;
 		checkMetadata = setInterval(function () {
 			console.log('playWhenMetadataLoaded')
@@ -254,7 +181,7 @@ MixTape.setCurrentClipPlayer = function(currentClipKey, currentBookmarkKey){
 	}
 }
 
-MixTape.updateUIForNewClip = function(currentClipName, startTime, endTime){
+MixTape.updateUIForNewClip = function(currentClipName, duration){
 	$("#track-name-container").html("<a>"+ currentClipName + "</a>");
 	var thumbContri = $('#progress_thumb_id').width()/2
 	basicBehavior.centerTrackName();
@@ -263,7 +190,15 @@ MixTape.updateUIForNewClip = function(currentClipName, startTime, endTime){
 	clip_time_played_ms = 0;
 	$(".time_passed").html("0:00");
 	//May want to update the end time as well.
-	$(".time_length").html("");
+	console.log(duration);
+	durInSecs = Math.floor(duration); 
+	endTimeMins = Math.floor(durInSecs/60);
+	endTimeSecs = durInSecs % 60;
+	if(endTimeSecs < 10){
+		$(".time_length").html(endTimeMins+":0"+endTimeSecs);
+	}else{
+		$(".time_length").html(endTimeMins+":"+endTimeSecs);
+	}
 
 }
 
@@ -396,66 +331,9 @@ console.log("End dragging");
 	}
 }
 
-//This is for when dragging after having pressed down on the track thumb.
-// MixTape.dragProgressElements = function(e){
-// 	var currentClip = Session.get('CURRENT_CLIP_KEY');
-// 	if (currentClip){
-// 		if(dragging_thumb){
-// 			MixTape.hoverTrack(e);
-// 			console.log("I'm dragging");
-// 			var new_pos = ''+(e.clientX-$('#track_id').offset().left);
-// 			//console.log('new_pos: ' + new_pos);
-// 			//console.log('offsetWidth: ' + document.getElementById('track_background_id').offsetWidth);
-// 			var max_width = document.getElementById('track_background_id').offsetWidth;
-// 			var currentBookmarkKey = Session.get('CURRENT_BOOKMARK_KEY');
-// 			if(currentBookmarkKey){
-// 				var left_position = $('#bookmark_marker_start').position().left;
-// 				var right_position = $('#bookmark_marker_end').position().left;
-
-// 				if(new_pos < left_position){
-// 					document.getElementById('progress_thumb_id').style.left = left_position- thumbContri +'px';
-// 					document.getElementById('progress_bar_id').style.width = left_position +'px';
-// 				} else if(new_pos > right_position){
-// 					document.getElementById('progress_thumb_id').style.left = right_position- thumbContri +'px';
-// 					document.getElementById('progress_bar_id').style.width = right_position +'px';
-// 				} else {
-// 					document.getElementById('progress_thumb_id').style.left = new_pos- thumbContri+'px';
-// 					document.getElementById('progress_bar_id').style.width = new_pos+'px';
-// 				}
-
-// 			} else{
-// 				if(new_pos < 0){
-// 					document.getElementById('progress_thumb_id').style.left = - thumbContri+'px';
-// 					document.getElementById('progress_bar_id').style.width = - thumbContri+'px';
-// 				} else if(new_pos > document.getElementById('track_background_id').offsetWidth){
-// 					document.getElementById('progress_thumb_id').style.left = document.getElementById('track_background_id').offsetWidth- thumbContri+'px';
-// 					document.getElementById('progress_bar_id').style.width = document.getElementById('track_background_id').offsetWidth+'px';
-// 				} else {
-// 					document.getElementById('progress_thumb_id').style.left = new_pos- thumbContri+'px';
-// 					document.getElementById('progress_bar_id').style.width = new_pos+'px';
-// 				}
-// 			}
-// 			var current_width = document.getElementById('progress_bar_id').offsetWidth;
-// 			var progress_percent = current_width/max_width;
-// 			var clip_time_length_ms = Session.get('clip_duration');
-// 			clip_time_played_ms = (clip_time_length_ms*progress_percent);
-// 			clip_time_played_ms = Math.floor(clip_time_played_ms/1000)*1000;
-
-// 			console.log(clip_time_played_ms);
-// 			MixTape.updateTimePassed();
-// 		}
-// 	}
-// }
 
 
-//Clears the help text from invalid bookmark time input
-MixTape.clearHelpText = function(e){
-	var target = e.target;
-	var value = $(target).val();
-	if(value == "Format 'mm:ss'" || "Double click clip!"){
-		$(target).val('');
-	}
-}
+
 //Update time_passed
 MixTape.updateTimePassed = function(){
 	var currentClip = Session.get('CURRENT_CLIP_KEY');
@@ -658,8 +536,6 @@ MixTape.clickTrack = function(e){
 	}
 }
 
-//Gabriel Modification. END
-
 MixTape.hoverTrackWhileDragging = function(e){
 	if(dragging_thumb){
 		MixTape.hoverTrack(e);
@@ -702,208 +578,3 @@ MixTape.hoverTrack = function(e){
 MixTape.unHover= function(e) {
 	$("#hover_time_id").html("");
 }
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-MixTape.isCssIdValid = function(id) {
-    re = /^[A-Za-z]+[\w\-\:\.]*$/
-    return re.test(id)
-}
-
-	// good places to look
-	// http://www.jque.re/plugins/version3/bootstrap.switch/
-	// http://www.bootstraptoggle.com/
-	// http://www.bootply.com/92189 (Manage/Listen)
-	// http://www.jonathanbriehl.com/2014/01/17/vertical-menu-for-bootstrap-3/ (Vertical Menu)
-	// http://earmbrust.github.io/bootstrap-window/ (windows for menu/editing?)
-	// http://startbootstrap.com/template-overviews/simple-sidebar/ (hidden menus)
-	// http://www.prepbootstrap.com/bootstrap-template/collapsepanels (collapsible?)
-
-
-
-
-
-// add to the menu a new item
-// Needs to be modified!!
-// MixTape.addItemToMenu = function(menu, item){
-// 	var menuul = menu.children[0].children[1];
-// 	var itemContainer = document.createElement('li');
-// 	var itemText = document.createElement('div');
-// 	var itemSubmenu = document.createElement('ul');
-// 	var itemPlay = document.createElement('a');
-// 	var itemEdit = document.createElement('a');
-// 	var itemRemove = document.createElement('a');
-// 	var itemPlayIconBefore = document.createElement('span');	
-// 	var itemEditIcon = document.createElement('span');
-// 	var itemPlayIcon = document.createElement('span');
-// 	var itemRemoveIcon = document.createElement('span');
-	
-
-// 	if(item.name().split('-')[0] == 'url'){
-// 		itemText.innerHTML = item.url;
-// 	}
-// 	else{
-// 		itemText.innerHTML = item.name();
-// 	}
-// 	itemPlayIconBefore.setAttribute('class', "glyphicon glyphicon-play music-item-play-icon");
-// 	itemContainer.setAttribute('class', "list-group-item" + " " + item.type);
-// 	itemSubmenu.setAttribute('class', "list-group-submenu");
-
-// 	// itemEdit.setAttribute('data-backdrop','false');
-// 	// itemEdit.setAttribute('data-toggle','modal');
-// 	itemEdit.setAttribute('class', "list-group-submenu-item edit primary btn btn-default");
-// 	itemPlay.setAttribute('class', "list-group-submenu-item play info btn btn-default");
-// 	itemRemove.setAttribute('class', "list-group-submenu-item trash danger btn btn-default");
-// 	itemEditIcon.setAttribute('class', "glyphicon glyphicon-pencil");
-// 	itemPlayIcon.setAttribute('class', "glyphicon glyphicon-play");
-// 	itemRemoveIcon.setAttribute('class', "glyphicon glyphicon-trash");
-	
-
-// 	$(itemRemove).click(function(e) {
-// 		e.stopPropagation();	
-// 		var selection = $(e.currentTarget.offsetParent.offsetParent);
-// 		var removalMenu = menuul;
-// 		var removalIndex = selection.index();
-// 		var removalType = MixTape.getBackEndItem(selection[0]).type;
-// 		var removalName = MixTape.getBackEndItem(selection[0]).name;
-		
-// 		var confirmationMessage;
-
-// 		bootbox.confirm("Are you sure you want to remove " +  removalType + " " + removalName + "?", function(result) {
-//   			if (result){
-//   				MixTape.removeItemFromMenu(removalMenu,selection,removalIndex);
-//   			}
-// 		});
-
-// 		console.log('In remove');
-
-// 	});
-
-
-// 	$(itemPlayIconBefore).click(function(e) {
-// 		// var name = ($(this).text()).trim();
-// 		console.log('In play');
-// 		var playClip = ($(this).parent().parent());
-// 		MixTape.deactivate(playClip[0]);
-// 		MixTape.makeActive(playClip[0]);
-// 		if(!playClip.hasClass('bookmark')) {
-// 			MixTape.setCurrentBookmark(-1);
-// 			MixTape.updateMenus();
-// 		}
-// 		else{
-// 			e.stopPropagation();
-// 		}
-// 		MixTape.setCurrentClipPlayer();
-// 		if (waitForMetadata){
-// 			checkMetadata = setInterval(function () {MixTape.playWhenMetadataLoaded(e)}, 250);
-// 		}else{
-// 			MixTape.togglePlay(e);
-// 		}		
-		
-// 	});
-
-// 	itemRemove.appendChild(itemRemoveIcon);
-
-// 	itemEdit.appendChild(itemEditIcon);
-// 	MixTape.addBookmarkEditorFunctionality($(itemEdit))
-
-// 	itemPlay.appendChild(itemPlayIcon);
-
-// 	itemSubmenu.appendChild(itemEdit);
-// 	itemSubmenu.appendChild(itemPlay);
-// 	itemSubmenu.appendChild(itemRemove);
-
-//  	itemText.insertBefore(itemPlayIconBefore,itemText.childNodes[0]);
-// 	itemContainer.appendChild(itemText);
-
-
-
-// 	$(itemContainer).hover(function(e){
-// 		$(itemText).children( "span" ).css( "visibility", "visible");
-// 	}, function(e) {
-//     $(itemText).children( "span" ).css( "visibility", "hidden");
-//   });
-
-// 	itemContainer.appendChild(itemSubmenu);
-
-// 	var tag = menu.id + '-' + item.id();
-// 		// console.log(item);
-// 		// console.log(item.id());
-// 		if(item.dbId){
-// 			tag = item.id();
-// 		}
-// 		else{
-// 			item.setId(tag);
-// 		}
-		
-// 		// console.log(item.id());
-// 		// console.log(tag);
-
-// 	itemContainer.setAttribute('id', tag);
-	
-// 	var clicks = 0, timeOut = 200;
-// 	$(itemContainer).bind('click', function(e) {
-// 		console.log("Click!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-// 		clicks++;
-// 		if(!$(this).hasClass('active')){
-// 			MixTape.deactivate(this);
-// 			MixTape.makeActive(this);
-// 			setTimeout(function() {
-// 		      if (clicks == 1){
-// 		      	MixTape.updateMenus();
-// 		      }      
-// 			}, timeOut);
-// 		}	
-
-// 	});
-
-// 	$(itemContainer).bind('dblclick', function(e) {
-// 		//isLoadingMetadata = true;
-// 		//console.log("isLoadingMetadata set to true!");
-// 		console.log('Before Setting the current Clip')
-// 		MixTape.setCurrentClipPlayer();
-// 		MixTape.updateMenus();
-// 		document.getElementById('inputStartTime').value = '';
-//         document.getElementById('inputEndTime').value = '';
-// 		clicks = 0;
-// 		console.log('doubleclick on item');
-// 	});
-
-
-	
-// 	menuul.appendChild(itemContainer);
-
-// 	var currentItem;
-// 	if (item.type == 'playlist') currentItem = currentPlaylist;
-// 	else if (item.type == 'clip') currentItem = currentClip;
-// 	else if (item.type == 'bookmark') currentItem = currentBookmark;
-	
-// 	if (currentItem){
-// 		if (item.dbId == currentItem.dbId){
-// 			$('#' + itemContainer.id).addClass('active');
-// 			if (item.type == 'bookmark') $('#' + itemContainer.id).click(MixTape.deselect);
-// 		}
-// 	}
-
-// 	// // change it to active if the active current clip or playlist
-// 	// if (item == currentPlaylist){
-// 	// 	$('#' + itemContainer.id).addClass('active');
-// 	// }
-// 	// else if (item == currentClip){
-// 	// 	console.log('Getting to set active.........!');
-// 	// 	$('#' + itemContainer.id).addClass('active');
-// 	// }
-// 	// else if (item == currentBookmark){
-// 	// 	$('#' + itemContainer.id).addClass('active');
-// 	// 	$('#' + itemContainer.id).click(MixTape.deselect);
-// 	// }
-// }
-

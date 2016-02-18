@@ -1,4 +1,4 @@
-/* This is the css file for mixtape*/
+
 #player-container{
     background: rgba(223, 224, 223, 0.9);
     position: fixed;
@@ -7,6 +7,20 @@
     min-height: 100px;
     z-index: 8;
     width:100%;
+}
+
+#heb-container {
+    position: absolute; 
+    top: 45px; 
+    right: 5px; 
+    display: block;
+    z-index: 33;
+}
+
+#heb-container > .glyphicon {
+    top: -21px;
+    left: 45px;
+    color: gray;
 }
 
 #btnPlay{
@@ -22,7 +36,7 @@
     font-weight: bold;
     font-size: 17px;
     position: absolute;
-    left: 40%;
+    left: 37%;
     top: 45px;
 }
 
@@ -32,7 +46,7 @@
     font-weight: bold;
     font-size: 17px;
     position: absolute;
-    left: 60%;
+    left: 59%;
     top: 45px;
 }
 
@@ -78,5 +92,7 @@
     position: absolute;
     top: 7px;
 }
+
+
 
         

@@ -26,12 +26,11 @@ $(document).ready(function() {
 	});	
 
 	
-	basicBehavior.centerBtnPlay();
 	basicBehavior.centerTrackName();
 	basicBehavior.setSectionHeights();
 
 	$( window ).resize(function() {
-  		basicBehavior.centerBtnPlay();
+  		// basicBehavior.centerBtnPlay();
 		basicBehavior.centerTrackName();
 	});
 	// var playlistsSubscription = Meteor.subscribe('playlistsDB');
@@ -41,11 +40,11 @@ $(document).ready(function() {
 });
 
 basicBehavior.centerBtnPlay = function(){
-	$('#btnPlay').css({margin:'10px 0 0 '+((-37 + $(document).width()-$('#btnPlay').width()) / 2)+'px'});
+	$('#btnPlay').css({margin:'10px 0 0 '+(-22 + $(document).width()/2 - $('#btnPlay').width())+'px'});
 }
 
 basicBehavior.centerTrackName = function(){
-	$('#track-name-container').css({margin:'0 0 0 '+(($(document).width()-$('#track-name-container').width()) / 2)+'px'});
+	$('#track-name-container').css({margin:'0 0 0 '+(- 15 + ($(document).width()-$('#track-name-container').width()) / 2)+'px'});
 }
 
 basicBehavior.setSectionHeights = function(){

@@ -11,8 +11,6 @@ $.validator.addMethod("noRepeatedPlaylistNames", function(value, element) {
   
 }, "A playlist with this name already exists.");
 
-// everything that is dealing with or updating the new playlist dialog is going in here...
-
 
 Template.addClipPanel.onRendered(function(){
     var validator = $('#add-clip-panel').validate({
@@ -127,8 +125,8 @@ Template.newPlaylist.helpers({
 $(document).ready(function() {
 	Session.set('np_wait_for_new_clip',false);
 	Session.set('np_adding_new_clip',false);
-	var new_clip_audio = document.getElementById('new-clip-audio');
-	var new_clip_source = document.getElementById('new-clip-source');
+	var new_clip_audio = document.getElementById('np-new-clip-audio');
+	var new_clip_source = document.getElementById('np-new-clip-source');
 
 	
 	new_clip_audio.addEventListener('loadedmetadata', function() {
@@ -143,13 +141,13 @@ $(document).ready(function() {
 });
 
 function addToPreClips(validator){	
-	var clipName = $('#clip-name').val();
-	var clipURL = $('#clip-url').val();
-	var clipNotes = $('#clip-notes').val();
+	var clipName = $('#np-clip-name').val();
+	var clipURL = $('#np-clip-url').val();
+	var clipNotes = $('#np-clip-notes').val();
 	Session.set('np_wait_for_new_clip',true);
 	Session.set('np_error_new_clip',false);
-	$('#new-clip-source').attr('src', clipURL);
-	var new_clip_audio = document.getElementById('new-clip-audio');
+	$('#np-new-clip-source').attr('src', clipURL);
+	var new_clip_audio = document.getElementById('np-new-clip-audio');
 	new_clip_audio.load();
 	if (np_waitForNewCLip) clearInterval(np_waitForNewCLip);
 	np_waitForNewCLip = setInterval(function () {
@@ -215,7 +213,7 @@ MixTape.clearPlaylistModal = function(){
 	preClipsDB.remove({});
 	$('#show-add').removeClass('active');
 	$('#add-playlist-form')[0].reset();
-	$('#playlist-notes').val('');
+	$('#np-playlist-notes').val('');
 	Session.set('np_adding_new_clip', false);
 	Session.set('np_error_new_clip',false);
 }
