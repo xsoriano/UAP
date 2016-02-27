@@ -1,0 +1,35 @@
+/* This is the css file for mixtape*/
+.title{
+	font-family: 'Vollkorn', serif;
+}
+
+.navbar-nav > li > a, .navbar-brand {
+    padding-top:6px !important; 
+    padding-bottom:0 !important;
+    height: 33px;
+}
+.navbar {min-height:28px !important;}
+
+#clip-name-container-div{
+	width:100%; 
+	height:100%;
+}
+
+#clip-name-container-div > ul{
+	width:100%; 
+	position: absolute; 
+	text-align: center; 
+	left: 0;
+}
+
+#track-name-container{
+	width:100%; 
+	height:100%; 
+	margin: auto; 
+	padding-top:5px;
+}
+
+#track-name-container > span{
+	padding:5px; 
+	color:rgb(157, 157, 157);
+}

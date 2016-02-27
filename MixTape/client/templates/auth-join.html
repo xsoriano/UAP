@@ -1,4 +1,4 @@
-<template name="signin">
+<template name="join">
   <div class="page auth">
     <nav>
       <div class="nav-group">
@@ -8,8 +8,8 @@
 
     <div class="content-scrollable">
       <div class="wrapper-auth">
-        <h1 class="title-auth">Sign In.</h1>
-        <p class="subtitle-auth" >Sing in to add and edit playlists, clips, and bookmarks!</p>
+        <h1 class="title-auth">Join.</h1>
+        <p class="subtitle-auth" >Join now to add and edit playlists, clips, and bookmarks.</p>
 
         <form>
           {{#if errorMessages}}
@@ -20,21 +20,26 @@
             </div>
           {{/if}}
 
-          <div class="input-symbol {{errorClass 'email'}}">
+          <div class="input-symbol  {{errorClass 'email'}}">
             <input type="email" name="email" placeholder="Your Email" />
             <span class="icon-email" title="Your Email"></span>
           </div>
 
-          <div class="input-symbol {{errorClass 'password'}}">
+          <div class="input-symbol  {{errorClass 'password'}}">
             <input type="password" name="password" placeholder="Password" />
             <span class="icon-lock" title="Password"></span>
           </div>
 
-          <button type="submit" class="btn-primary">Sign in</button>
+          <div class="input-symbol {{errorClass 'confirm'}}">
+            <input type="password" name="confirm" placeholder="Confirm Password" />
+            <span class="icon-lock" title="Confirm Password"></span>
+          </div>
+
+          <button type="submit" class="btn-primary">Join Now</button>
         </form>
       </div>
 
-      <a href="{{pathFor 'join'}}" class="link-auth-alt">Need an account? Join Now.</a>
+      <a href="{{pathFor 'signin'}}" class="link-auth-alt">Have an account? Sign in</a>
     </div>
   </div>
 </template>

@@ -106,16 +106,6 @@ if (Meteor.isClient) {
 		}
 	}
 
-
-
-	Template.menuBookmarks.rendered = function() {
-		this.$('#bookmarkItems').sortable({
-			stop: function(e, ui) {
-	  			reorderMenus(ui, bookmarksDB)
-			}
-		});
-	}
-
 	Template.menuPlaylists.events({
 		// I don't think there is a need for a play button here
 		// 'mouseenter .playlist': function(event){
