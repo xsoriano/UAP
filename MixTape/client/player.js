@@ -367,9 +367,8 @@ function adjustBookmarkers(bookmarkStart, bookmarkEnd){
 	}
 }
 
-//Author: Gabrielj. Called in setCurrentBookmark. Meant to adjust the bookmark markers and the displayed times accordingly.
 MixTape.adjustBookmarkMarkers = function(bookmarkStart, bookmarkEnd){
-	if(bookmarkStart && bookmarkEnd){
+	if(bookmarkStart!=null && bookmarkEnd!=null){
 		var clip = document.getElementById('current-clip');
 
 		clip.currentTime = Math.floor(clip_time_played_ms/1000);
